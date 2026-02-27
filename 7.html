@@ -147,7 +147,7 @@
       min-height: 82px;
       padding: 10px 10px;
       border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(241,245,249,.93));
+      background: linear-gradient(180deg, rgba(255,251,214,.98), rgba(255,243,174,.92));
       border: 2px solid rgba(15,23,42,.10);
       box-shadow: 0 10px 18px rgba(15,23,42,.10);
       display:flex;
@@ -240,6 +240,40 @@
       .boardWrap{ padding: 12px; }
       main{ padding: 12px; }
     }
+  
+/* footer navigation */
+.footerNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 14px 18px 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.92));
+  border-top: 1px solid rgba(15,23,42,.08);
+}
+.navBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text);
+  text-decoration:none;
+  border: 1px solid rgba(15,23,42,.14);
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(241,245,249,.9));
+  box-shadow: 0 10px 22px rgba(15,23,42,.10);
+  user-select:none;
+}
+.navBtn:hover{ filter: brightness(1.02); }
+.navBtn:active{ transform: translateY(1px); }
+.navBtn.disabled{
+  opacity:.45;
+  pointer-events:none;
+  box-shadow:none;
+}
   </style>
 </head>
 <body>
@@ -250,7 +284,8 @@
         <div class="rules">
           <div><b>類別：</b> <b>求偶</b>（吸引配偶）／<b>護卵</b>（保護或孵卵）／<b>育幼</b>（照顧幼體）。</div>
           <div><b>玩法：</b>點兩個「同類別」項目，若能用<b>一直線</b>或<b>一個直角</b>連起來，且<b>連線不能穿過未消失項目</b>，就消除並得分。</div>
-          <div><b>結束：</b>60 秒到，或 24 個項目全部消除即停止。</div>
+          <div><b>過關：</b>分數達 <b>100</b> 分即過關（解鎖下一頁）。</div>
+          <div><b>結束：</b>75 秒到，或 24 個項目全部消除即停止。</div>
         </div>
         <div>計分：成功 +10；連續成功第 2 次起每次額外 +2（連越多加越多）；連錯 -5。提示類別會 -10（顯示 2 秒）。</div>
       </div>
@@ -258,7 +293,7 @@
 
     <div class="toolbar">
       <div class="hud" aria-live="polite">
-        <div class="pill"><span class="k">⏱️ 時間</span><span class="v" id="time">60</span></div>
+        <div class="pill"><span class="k">⏱️ 時間</span><span class="v" id="time">75</span></div>
         <div class="pill"><span class="k">⭐ 分數</span><span class="v" id="score">0</span></div>
         <div class="pill"><span class="k">🔥 連續</span><span class="v" id="streak">0</span></div>
         <div class="pill"><span class="k">✅ 成功</span><span class="v" id="ok">0</span></div>
@@ -279,6 +314,12 @@
       <div class="result hidden" id="result"></div>
       <div class="smallNote">小提醒：中間「繁殖行為」是標題，不用配對。</div>
     </main>
+
+
+<footer class="footerNav" aria-label="頁尾導覽">
+  <a class="navBtn" href="6.html">← 上一頁</a>
+  <a class="navBtn disabled" id="nextPage" href="./8.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
+</footer>
   </div>
 
   <script>
@@ -335,7 +376,7 @@
 
     let running = false;
     let timer = null;
-    let timeLeft = 60;
+    let timeLeft = 75;
 
     let score = 0;
     let streak = 0;
@@ -345,6 +386,25 @@
     let selected = null; // element
 
     const tilesByIdx = new Map();
+
+
+const nextPage = document.getElementById("nextPage");
+let passed = false;
+
+function updateNav(){
+  if (!nextPage) return;
+  if (!passed && score >= 100) passed = true;
+
+  if (passed){
+    nextPage.classList.remove("disabled");
+    nextPage.setAttribute("aria-disabled","false");
+    nextPage.removeAttribute("tabindex");
+  } else {
+    nextPage.classList.add("disabled");
+    nextPage.setAttribute("aria-disabled","true");
+    nextPage.setAttribute("tabindex","-1");
+  }
+}
 
     function clampScore(){ if (score < 0) score = 0; }
 
@@ -452,6 +512,7 @@
       streakEl.textContent = String(streak);
       okEl.textContent = String(ok);
       badEl.textContent = String(bad);
+      updateNav();
     }
 
     function countAdjSameCat(cells){
@@ -538,13 +599,16 @@
 
       const total = ok + bad;
       const acc = total ? Math.round((ok / total) * 100) : 0;
-      const title = (reason === "win") ? "全部完成！" : "時間到！";
+      const passedNow = score >= 100;
+      const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
+      const title = (reason === "win") ? `全部完成！${verdict}` : `時間到！${verdict}`;
       const extra = (reason === "win") ? `剩餘時間：<strong>${timeLeft}</strong> 秒` : "";
 
       resultEl.innerHTML = `
         <div style="font-size:16px;font-weight:900;margin-bottom:6px;">${title}</div>
         <div>⭐ 最終得分：<strong>${score}</strong> ${extra ? "｜" + extra : ""}</div>
-        <div>✅ 成功：<strong>${ok}</strong>　❌ 連錯：<strong>${bad}</strong>　🎯 正確率：<strong>${acc}%</strong></div>
+                <div style="margin-top:6px;">🏁 結果：<strong>${verdict}</strong>（100 分過關）</div>
+<div>✅ 成功：<strong>${ok}</strong>　❌ 連錯：<strong>${bad}</strong>　🎯 正確率：<strong>${acc}%</strong></div>
         <div style="margin-top:8px;color:var(--muted);">按「開始 / 重新開始」可再玩一次。</div>
       `;
       resultEl.classList.remove("hidden");
@@ -627,10 +691,11 @@
       }
     }
 
-    function start(){
+            function start(){
       running = true;
-      timeLeft = 60;
+      timeLeft = 75;
       score = 0;
+      passed = false;
       streak = 0;
       ok = 0;
       bad = 0;
@@ -639,7 +704,6 @@
       const cells = makeBoard();
       renderBoard(cells);
       updateHud();
-
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
         if (!running) return;

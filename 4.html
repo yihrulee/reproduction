@@ -452,7 +452,7 @@
 
           <div class="match" aria-label="第4題動物配對">
             <div class="mrow">
-              <div class="animal">爬蟲類</div>
+              <div class="animal">多數爬蟲類</div>
               <div class="hint">依據第 2 段</div>
               <select id="q4_reptile">
                 <option value="">請選擇…</option>
@@ -622,10 +622,10 @@
       state.passed[2]=ok;
 
       if(ok){
-        setFeedback(2, true, "✅ 正確！", "文本：兩生類、鳥類、多數魚類與爬蟲類屬卵生；多數哺乳類屬胎生。");
+        setFeedback(2, true, "✅ 正確！", "文本：兩生類、鳥類、多數魚類與多數爬蟲類屬卵生；多數哺乳類屬胎生。");
         lockQuestion(2); showRetry(2,false);
       }else{
-        setFeedback(2, false, "❌ 再想想", "提示：第 2 段列的卵生包含兩生類、鳥類、多數魚類、爬蟲類；『多數哺乳類』不是卵生。");
+        setFeedback(2, false, "❌ 再想想", "提示：第 2 段列的卵生包含兩生類、鳥類、多數魚類、多數爬蟲類；『多數哺乳類』不是卵生。");
         lockQuestion(2); showRetry(2,true);
       }
       updateNext();
@@ -701,7 +701,7 @@
       state.passed[4]=ok;
 
       if(ok){
-        setFeedback(4, true, "✅ 正確！", "依據文本：兩生類、鳥類、多數魚類、爬蟲類屬卵生；多數哺乳類屬胎生。");
+        setFeedback(4, true, "✅ 正確！", "依據文本：兩生類、鳥類、多數魚類、多數爬蟲類屬卵生；多數哺乳類屬胎生。");
         lockQuestion(4); showRetry(4,false);
       }else{
         setFeedback(4, false, "❌ 再想想", "提示：第 2 段列的是卵生；第 3 段列的是胎生（多數哺乳類）。");
