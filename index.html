@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>無性生殖與有性生殖｜入口</title>
+  <style>
+    :root{
+      --bg:#0b1224;
+      --bg2:#0f1b3f;
+      --card:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.16);
+      --text:#eef3ff;
+      --muted:rgba(238,243,255,.78);
+      --shadow: 0 24px 70px rgba(0,0,0,.45);
+      --radius: 22px;
+      --focus:#7aa2ff;
+    }
+    *{box-sizing:border-box}
+    html, body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 650px at 15% 15%, rgba(80,130,255,.35), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(0,220,180,.22), transparent 55%),
+        radial-gradient(850px 520px at 45% 105%, rgba(255,220,120,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow:hidden;
+    }
+    .stage{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 18px;
+    }
+    .panel{
+      width:min(980px, 100%);
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 34px);
+      text-align:center;
+      backdrop-filter: blur(10px);
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 54px);
+      letter-spacing: .8px;
+      line-height: 1.15;
+    }
+    .sub{
+      margin: 0 0 22px;
+      font-size: clamp(14px, 2.2vw, 18px);
+      color: var(--muted);
+      letter-spacing: .2px;
+    }
+
+    /* clickable image button */
+    .imgBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: min(520px, 92vw);
+      aspect-ratio: 16 / 10;
+      border-radius: 20px;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      overflow:hidden;
+      cursor:pointer;
+      user-select:none;
+      outline:none;
+      transition: transform .10s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .imgBtn:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.28);
+      box-shadow: 0 22px 60px rgba(0,0,0,.42);
+    }
+    .imgBtn:active{
+      transform: translateY(0px) scale(.995);
+    }
+    .imgBtn:focus-visible{
+      box-shadow: 0 0 0 4px rgba(122,162,255,.35), 0 22px 60px rgba(0,0,0,.42);
+      border-color: var(--focus);
+    }
+    .imgBtn img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .hint{
+      margin: 14px 0 0;
+      font-size: 13px;
+      color: rgba(238,243,255,.70);
+    }
+
+    /* small top corner helper (optional, unobtrusive) */
+    .corner{
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      font-size: 12px;
+      color: rgba(238,243,255,.55);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 8px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body>
+  <div class="corner">按 Enter / Space 或點圖進入</div>
+
+  <main class="stage" aria-label="無性生殖與有性生殖入口頁">
+    <section class="panel" role="region" aria-labelledby="title" aria-describedby="subtitle">
+      <h1 id="title">無性生殖與有性生殖</h1>
+      <p id="subtitle" class="sub">點擊圖片開始學習與挑戰</p>
+
+      <!-- Button is a focusable element; Enter/Space triggers via native semantics + JS fallback -->
+      <div
+        id="startBtn"
+        class="imgBtn"
+        role="button"
+        tabindex="0"
+        aria-label="開始，前往 1.html"
+        title="開始（前往 1.html）"
+      >
+        <img src="0.png" alt="開始學習（0.png）" />
+      </div>
+
+      <p class="hint">點擊上方圖片即可進入下一頁。</p>
+    </section>
+  </main>
+
+  <script>
+    const btn = document.getElementById('startBtn');
+    function go(){
+      // same folder
+      window.location.href = './1.html';
+    }
+
+    // click
+    btn.addEventListener('click', go);
+
+    // keyboard (Enter / Space)
+    btn.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if(k === 'Enter' || k === ' ' || k === 'Spacebar'){
+        e.preventDefault();
+        go();
+      }
+    });
+
+    // Extra: allow whole page Enter/Space to start, but avoid interfering with focus on other elements
+    document.addEventListener('keydown', (e) => {
+      if(e.defaultPrevented) return;
+      const t = e.target;
+      const tag = (t && t.tagName) ? t.tagName.toLowerCase() : '';
+      const isTyping = ['input','textarea','select','button','a'].includes(tag);
+      if(isTyping) return;
+
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        go();
+      }
+    });
+  </script>
+</body>
+</html>

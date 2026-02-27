@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>動物的繁殖行為｜互動學習</title>
+  <style>
+    :root{
+      --bg:#f7f9ff;
+      --surface:#ffffff;
+      --card:#ffffff;
+      --text:#0b1226;
+      --muted:#475569;
+      --line:rgba(15,23,42,.14);
+
+      --good-bg:#d1fae5; /* green-100 */
+      --good-line:#10b981; /* emerald-500 */
+      --bad-bg:#fee2e2;  /* red-100 */
+      --bad-line:#ef4444; /* red-500 */
+
+      --accent:#7c3aed; /* violet-600 */
+      --accent2:#22c55e; /* green-500 */
+      --shadow:0 18px 40px rgba(2,6,23,.12);
+      --radius:18px;
+      --radius2:14px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 520px at 15% -10%, rgba(124,58,237,.16), transparent 60%),
+        radial-gradient(900px 520px at 105% 0%, rgba(34,197,94,.14), transparent 60%),
+        linear-gradient(180deg, #f7f9ff 0%, #f2f7ff 45%, #eef2ff 100%);
+    }
+
+    a{color:inherit}
+    .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 40px}
+    .hero{
+      width:100%;
+      padding:26px 16px;
+      background:
+        linear-gradient(135deg, rgba(124,58,237,.92), rgba(34,197,94,.70)),
+        radial-gradient(1200px 420px at 10% 0%, rgba(255,255,255,.22), transparent 60%);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:-120px -80px auto auto;
+      width:340px; height:340px;
+      background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), transparent 60%);
+      transform:rotate(12deg);
+      border-radius:999px;
+      pointer-events:none;
+    }
+    .heroInner{max-width:1000px;margin:0 auto;padding:8px 16px}
+    .hero h1{margin:0 0 6px;font-size:clamp(22px, 4vw, 34px); letter-spacing:.5px; color:rgba(255,255,255,.98)}
+    .hero p{margin:0;color:rgba(255,255,255,.92);line-height:1.6}
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      margin-top:10px;
+      padding:8px 12px;
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:999px;
+      font-size:14px;
+      color:rgba(255,255,255,.96);
+    }
+    .dot{width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.9)}
+    .dot.g{background:rgba(34,197,94,.95)}
+    .dot.v{background:rgba(124,58,237,.95)}
+
+    .sectionTitle{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      margin:18px 0 10px;
+      gap:12px;
+    }
+    .sectionTitle h2{margin:0;font-size:18px}
+    .hint{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+
+    .card{
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .textBlock h3{margin:0 0 8px;font-size:18px}
+    .textBlock p{margin:0;color:rgba(15,23,42,.92);line-height:1.9;font-size:16px}
+    .textBlock + .textBlock{margin-top:12px;border-top:1px dashed rgba(15,23,42,.14);padding-top:12px}
+
+    /* keyword colors */
+    .kw1{color:#b45309;font-weight:900}   /* amber-700 */
+    .kw2{color:#0369a1;font-weight:800}   /* sky-700 */
+    .kw3{color:#be123c;font-weight:800}   /* rose-700 */
+    .kw4{color:#047857;font-weight:800}   /* emerald-700 */
+    .kw5{color:#6d28d9;font-weight:800}   /* violet-700 */
+    .kw6{color:#b91c1c;font-weight:800}   /* red-700 */
+    .kw7{color:#92400e;font-weight:900;text-decoration:underline} /* amber-800 */
+
+    .imgWrap{margin-top:14px}
+    .imgWrap img{
+      width:100%;
+      border-radius:var(--radius);
+      border:1px solid rgba(15,23,42,.14);
+      display:block;
+      background:#ffffff;
+    }
+    .imgCap{margin:8px 2px 0;color:var(--muted);font-size:13px}
+
+    .qGrid{display:grid; gap:14px; margin-top:10px}
+    .q{
+      background:rgba(255,255,255,.88);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:0 10px 26px rgba(2,6,23,.08);
+    }
+    .q.correct{background:var(--good-bg); border-color:var(--good-line)}
+    .q.incorrect{background:var(--bad-bg); border-color:var(--bad-line)}
+    .qHead{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .qTitle{margin:0;font-size:16px}
+    .qType{
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.18);
+      background:rgba(15,23,42,.04);
+      color:rgba(15,23,42,.92);
+    }
+
+    .options{display:grid; gap:8px}
+    label.opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(15,23,42,.14);
+      background:rgba(15,23,42,.03);
+      cursor:pointer;
+      user-select:none;
+    }
+    label.opt input{margin-top:3px; transform:scale(1.05)}
+    .muted{color:var(--muted); font-size:14px; line-height:1.5; margin:6px 0 0}
+
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+      align-items:center;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+      background:rgba(124,58,237,.92);
+      color:white;
+      box-shadow:0 10px 20px rgba(2,6,23,.14);
+    }
+    button.secondary{
+      background:rgba(15,23,42,.05);
+      border:1px solid rgba(15,23,42,.16);
+      color:rgba(15,23,42,.92);
+      box-shadow:none;
+    }
+    button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+    .feedback{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(15,23,42,.14);
+      background:rgba(15,23,42,.04);
+      line-height:1.7;
+      font-size:14px;
+    }
+    .q.correct .feedback, .q.incorrect .feedback{display:block}
+
+    /* Q3 categorize */
+    .catWrap{display:grid; gap:10px}
+    .bank, .bucket{
+      border:1px dashed rgba(15,23,42,.22);
+      border-radius:14px;
+      padding:10px;
+      background:rgba(15,23,42,.03);
+      min-height:72px;
+    }
+    .bucketHead{
+      display:flex; align-items:center; justify-content:space-between;
+      margin:0 0 8px;
+      font-weight:900;
+    }
+    .bucketHead small{font-weight:700; opacity:.75}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{
+      border:1px solid rgba(15,23,42,.16);
+      background:rgba(124,58,237,.10);
+      color:rgba(15,23,42,.92);
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .05s ease;
+      outline:none;
+      line-height:1.25;
+    }
+    .chip:active{transform:scale(.98)}
+    .chip.selected{
+      outline:3px solid rgba(124,58,237,.45);
+      border-color:rgba(124,58,237,.65);
+    }
+    .bucket.tapTarget{
+      outline:3px solid rgba(34,197,94,.35);
+      border-color:rgba(34,197,94,.55);
+    }
+    .chip[aria-disabled="true"]{opacity:.55; cursor:not-allowed}
+
+    /* Q4 fill in */
+    .fillRow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.14);
+      background:rgba(15,23,42,.03);
+    }
+    input[type="text"]{
+      flex:1 1 220px;
+      border-radius:12px;
+      border:1px solid rgba(15,23,42,.18);
+      background:rgba(255,255,255,.92);
+      color:var(--text);
+      padding:10px 12px;
+      font-size:16px;
+      outline:none;
+    }
+
+    /* Footer nav */
+    .footerNav{
+      display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;
+      margin-top:18px;
+      padding-top:14px;
+      border-top:1px solid rgba(15,23,42,.14);
+    }
+    .navBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      text-decoration:none;
+      font-weight:900;
+      border:1px solid rgba(15,23,42,.16);
+      background:rgba(15,23,42,.04);
+    }
+    .navBtn.primary{
+      background:rgba(34,197,94,.14);
+      border-color:rgba(34,197,94,.35);
+    }
+    .navBtn.disabled{
+      opacity:.45;
+      pointer-events:none;
+      filter:saturate(.6);
+    }
+    .footHint{color:var(--muted); font-size:13px; line-height:1.5; margin:0}
+
+    @media (max-width:520px){
+      .wrap{padding:18px 12px 34px}
+      .qHead{gap:8px}
+      .qType{order:2}
+      label.opt{padding:10px}
+      .heroInner{padding:8px 12px}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Full-width banner -->
+  <header class="hero" role="banner">
+    <div class="heroInner">
+      <h1>動物的繁殖行為</h1>
+      <p>閱讀三段重點文本後，完成 4 題不同類型的互動練習；<b>全部答對</b>才會解鎖頁尾的「下一頁 →」。</p>
+      <div class="badge" aria-label="學習提示">
+        <span class="dot v" aria-hidden="true"></span><span>作答後點「檢查答案」</span>
+        <span class="dot g" aria-hidden="true"></span><span>答錯可「重做本題」</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-label="教學文本">
+      <div class="textBlock">
+        <h3><span class="kw1">求偶</span></h3>
+        <p>
+          有些動物會利用<span class="kw2">鳴叫聲</span>、<span class="kw3">氣味</span>、<span class="kw4">顏色</span>或<span class="kw5">展示外表</span>等方式來吸引同種類的異性，稱為<span class="kw1">求偶</span>，
+          以達到<span class="kw7">繁殖產生後代</span>的目的。例如在繁殖季節，有些昆蟲會散發特殊<span class="kw3">氣味</span>，引誘異性交配；
+          有些魚類的<span class="kw4">體色</span>會變得鮮豔；雄蛙會鼓起鳴囊發出<span class="kw2">叫聲</span>，藉此吸引雌蛙（）；有些鳥類則會<span class="kw5">展示特別的外表</span>來引起異性的注意。
+        </p>
+      </div>
+
+      <div class="textBlock">
+        <h3><span class="kw6">護卵</span></h3>
+        <p>
+          行<span class="kw7">有性生殖</span>的動物產生後代後，有些有<span class="kw6">護卵</span>的行為，例如雌性蝦、蟹會將<span class="kw2">受精卵</span>黏附在腹部以保護卵；
+          企鵝產卵後，會把卵放在雙腳上，用肚子覆蓋來<span class="kw4">孵卵</span>。
+        </p>
+      </div>
+
+      <div class="textBlock">
+        <h3><span class="kw2">育幼</span></h3>
+        <p>
+          有些動物則有<span class="kw2">育幼</span>的行為，例如臺灣獼猴的母猴會用<span class="kw3">乳汁哺育</span>小猴，直到小猴長大獨立；
+          小企鵝出生後，企鵝會用吐出的<span class="kw5">食糜</span>來餵食小企鵝。<span class="kw6">護卵</span>與<span class="kw2">育幼</span>行為可以提高後代<span class="kw7">存活率</span>。
+        </p>
+      </div>
+
+      <div class="imgWrap">
+        <img src="6_1.png" alt="動物繁殖行為示意照片（6_1.png）" />
+</div>
+    </section>
+
+    <div class="sectionTitle">
+      <h2>互動練習（四題皆需答對）</h2>
+      <p class="hint">每題回答完才會解鎖「檢查答案」。提交後會鎖定；答錯可重做。</p>
+    </div>
+
+    <section class="qGrid" aria-label="互動練習題">
+
+      <!-- Q1: Single choice -->
+      <article class="q" id="q1" data-qid="q1">
+        <div class="qHead">
+          <h3 class="qTitle">Q1. 下列哪一個最符合「求偶」的例子？</h3>
+          <span class="qType">單選題</span>
+        </div>
+
+        <div class="options" role="radiogroup" aria-label="Q1 選項">
+          <label class="opt"><input type="radio" name="q1opt" value="A"> 雌蟹把受精卵黏在腹部以保護卵。</label>
+          <label class="opt"><input type="radio" name="q1opt" value="B"> 雄蛙鼓起鳴囊發出叫聲，吸引雌蛙。</label>
+          <label class="opt"><input type="radio" name="q1opt" value="C"> 企鵝用吐出的食糜餵食小企鵝。</label>
+          <label class="opt"><input type="radio" name="q1opt" value="D"> 企鵝把卵放在雙腳上，用肚子覆蓋孵卵。</label>
+        </div>
+
+        <p class="muted">提示：求偶是「吸引異性」的行為。</p>
+
+        <div class="controls">
+          <button class="checkBtn" data-check="q1" disabled>檢查答案</button>
+          <button class="redoBtn secondary" data-redo="q1" style="display:none;">重做本題</button>
+        </div>
+
+        <div class="feedback" aria-live="polite"></div>
+      </article>
+
+      <!-- Q2: Multiple choice -->
+      <article class="q" id="q2" data-qid="q2">
+        <div class="qHead">
+          <h3 class="qTitle">Q2. 哪些敘述屬於「護卵」行為？（可複選）</h3>
+          <span class="qType">複選題</span>
+        </div>
+
+        <div class="options" aria-label="Q2 選項">
+          <label class="opt"><input type="checkbox" name="q2opt" value="A"> 雌性蝦把受精卵黏附在腹部。</label>
+          <label class="opt"><input type="checkbox" name="q2opt" value="B"> 母獼猴用乳汁哺育小猴。</label>
+          <label class="opt"><input type="checkbox" name="q2opt" value="C"> 企鵝把卵放在雙腳上，用肚子覆蓋孵卵。</label>
+          <label class="opt"><input type="checkbox" name="q2opt" value="D"> 有些魚類在繁殖季節體色變得鮮豔。</label>
+        </div>
+
+        <p class="muted">提示：護卵與「保護卵或孵卵」有關，和餵食幼體不同。</p>
+
+        <div class="controls">
+          <button class="checkBtn" data-check="q2" disabled>檢查答案</button>
+          <button class="redoBtn secondary" data-redo="q2" style="display:none;">重做本題</button>
+        </div>
+
+        <div class="feedback" aria-live="polite"></div>
+      </article>
+
+      <!-- Q3: Categorize (tap-to-move) -->
+      <article class="q" id="q3" data-qid="q3">
+        <div class="qHead">
+          <h3 class="qTitle">Q3. 分類配對：把卡片放到正確的行為類別中</h3>
+          <span class="qType">分類配對（點選移動）</span>
+        </div>
+
+        <p class="muted" style="margin-top:0">
+          操作方式：先點選一張卡片（紫色外框），再點選要放入的分類區；若要退回，直接點分類區裡的卡片即可回到「待分類」。
+        </p>
+
+        <div class="catWrap" aria-label="Q3 分類區">
+          <div class="bank" data-bucket="bank" aria-label="待分類">
+            <div class="bucketHead">待分類 <small>（全部放入類別後才可檢查）</small></div>
+            <div class="chips" id="bankChips">
+              <div class="chip" tabindex="0" role="button" data-correct="courtship">雄蛙鼓起鳴囊鳴叫</div>
+              <div class="chip" tabindex="0" role="button" data-correct="courtship">昆蟲散發特殊氣味</div>
+              <div class="chip" tabindex="0" role="button" data-correct="eggcare">雌性蝦／蟹把卵黏在腹部</div>
+              <div class="chip" tabindex="0" role="button" data-correct="eggcare">企鵝把卵放在腳上孵卵</div>
+              <div class="chip" tabindex="0" role="button" data-correct="parentcare">母獼猴用乳汁哺育幼猴</div>
+              <div class="chip" tabindex="0" role="button" data-correct="parentcare">企鵝用食糜餵食幼企鵝</div>
+            </div>
+          </div>
+
+          <div class="bucket" data-bucket="courtship" aria-label="求偶">
+            <div class="bucketHead"><span>求偶</span><small>吸引異性</small></div>
+            <div class="chips"></div>
+          </div>
+
+          <div class="bucket" data-bucket="eggcare" aria-label="護卵">
+            <div class="bucketHead"><span>護卵</span><small>保護卵／孵卵</small></div>
+            <div class="chips"></div>
+          </div>
+
+          <div class="bucket" data-bucket="parentcare" aria-label="育幼">
+            <div class="bucketHead"><span>育幼</span><small>哺育／餵食幼體</small></div>
+            <div class="chips"></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="checkBtn" data-check="q3" disabled>檢查答案</button>
+          <button class="redoBtn secondary" data-redo="q3" style="display:none;">重做本題</button>
+        </div>
+
+        <div class="feedback" aria-live="polite"></div>
+      </article>
+
+      <!-- Q4: Fill in blank -->
+      <article class="q" id="q4" data-qid="q4">
+        <div class="qHead">
+          <h3 class="qTitle">Q4. 填空題：護卵與育幼行為可以提高後代 ____ 率。</h3>
+          <span class="qType">填空題</span>
+        </div>
+
+        <div class="fillRow">
+          <span style="font-weight:900;">請填入關鍵詞：</span>
+          <input id="q4input" type="text" inputmode="text" autocomplete="off" placeholder="請輸入答案" aria-label="Q4 填空答案" />
+        </div>
+
+        <div class="controls">
+          <button class="checkBtn" data-check="q4" disabled>檢查答案</button>
+          <button class="redoBtn secondary" data-redo="q4" style="display:none;">重做本題</button>
+        </div>
+
+        <div class="feedback" aria-live="polite"></div>
+      </article>
+
+    </section>
+
+    <footer class="footerNav" aria-label="頁尾導覽">
+      <a class="navBtn" href="5.html">← 上一頁</a>
+      <p class="footHint" id="unlockHint">🔒 先把 4 題全部答對，才會解鎖「下一頁 →」。</p>
+      <a class="navBtn primary disabled" id="nextBtn" href="./7.html" aria-disabled="true">下一頁 →</a>
+    </footer>
+
+  </main>
+
+  <script>
+    (function(){
+      const status = { q1: null, q2: null, q3: null, q4: null };
+      const $ = (sel, root=document) => root.querySelector(sel);
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+      function setQuestionState(qid, isCorrect, feedbackHtml){
+        const q = document.getElementById(qid);
+        q.classList.remove('correct','incorrect');
+        q.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+        const fb = q.querySelector('.feedback');
+        fb.innerHTML = feedbackHtml;
+
+        status[qid] = isCorrect;
+        updateNav();
+      }
+
+      function lockQuestion(qid){
+        const q = document.getElementById(qid);
+
+        // lock inputs
+        $$('input', q).forEach(inp => inp.disabled = true);
+
+        // lock chips (Q3)
+        if(qid === 'q3'){
+          $$('.chip', q).forEach(ch => ch.setAttribute('aria-disabled','true'));
+        }
+
+        const check = q.querySelector('.checkBtn');
+        check.disabled = true;
+        check.dataset.locked = "1";
+      }
+
+      function unlockQuestion(qid){
+        const q = document.getElementById(qid);
+        q.classList.remove('correct','incorrect');
+        const fb = q.querySelector('.feedback');
+        fb.innerHTML = "";
+
+        $$('input', q).forEach(inp => inp.disabled = false);
+
+        const check = q.querySelector('.checkBtn');
+        check.dataset.locked = "0";
+        check.disabled = true; // must answer first
+
+        const redo = q.querySelector('.redoBtn');
+        redo.style.display = 'none';
+
+        status[qid] = null;
+        updateNav();
+      }
+
+      function showRedoIfWrong(qid, isCorrect){
+        const q = document.getElementById(qid);
+        const redo = q.querySelector('.redoBtn');
+        redo.style.display = isCorrect ? 'none' : 'inline-flex';
+      }
+
+      function updateNav(){
+        const allCorrect = Object.values(status).every(v => v === true);
+        const nextBtn = document.getElementById('nextBtn');
+        const hint = document.getElementById('unlockHint');
+        if(allCorrect){
+          nextBtn.classList.remove('disabled');
+          nextBtn.setAttribute('aria-disabled','false');
+          hint.textContent = '✅ 已全部答對！可以前往下一頁。';
+        }else{
+          nextBtn.classList.add('disabled');
+          nextBtn.setAttribute('aria-disabled','true');
+          hint.textContent = '🔒 先把 4 題全部答對，才會解鎖「下一頁 →」。';
+        }
+      }
+
+      // ---- Enable check buttons only after answering ----
+      // Q1 radio
+      const q1 = document.getElementById('q1');
+      const q1Check = $('.checkBtn', q1);
+      q1Check.dataset.locked = "0";
+      $$('input[name="q1opt"]', q1).forEach(r => {
+        r.addEventListener('change', () => {
+          if(q1Check.dataset.locked === "1") return;
+          q1Check.disabled = !$('input[name="q1opt"]:checked', q1);
+        });
+      });
+
+      // Q2 checkbox
+      const q2 = document.getElementById('q2');
+      const q2Check = $('.checkBtn', q2);
+      q2Check.dataset.locked = "0";
+      $$('input[name="q2opt"]', q2).forEach(c => {
+        c.addEventListener('change', () => {
+          if(q2Check.dataset.locked === "1") return;
+          const any = $$('input[name="q2opt"]:checked', q2).length > 0;
+          q2Check.disabled = !any;
+        });
+      });
+
+      // Q4 input
+      const q4 = document.getElementById('q4');
+      const q4Check = $('.checkBtn', q4);
+      q4Check.dataset.locked = "0";
+      const q4input = document.getElementById('q4input');
+      q4input.addEventListener('input', () => {
+        if(q4Check.dataset.locked === "1") return;
+        q4Check.disabled = q4input.value.trim().length === 0;
+      });
+
+      // ---- Q3 tap-to-move categorize (cards randomized) ----
+      const q3 = document.getElementById('q3');
+      const bankChips = $('#bankChips', q3);
+      const buckets = $$('.bucket', q3);
+      const q3Check = $('.checkBtn', q3);
+      q3Check.dataset.locked = "0";
+
+      function shuffleChildren(parent){
+        const items = Array.from(parent.children);
+        for(let i=items.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [items[i], items[j]] = [items[j], items[i]];
+        }
+        parent.innerHTML = "";
+        items.forEach(el => parent.appendChild(el));
+      }
+
+      // 初始隨機
+      shuffleChildren(bankChips);
+
+      let selectedChip = null;
+
+      function clearSelection(){
+        $$('.chip', q3).forEach(ch => ch.classList.remove('selected'));
+        selectedChip = null;
+        buckets.forEach(b => b.classList.remove('tapTarget'));
+      }
+
+      function canInteractQ3(){
+        return q3Check.dataset.locked !== "1";
+      }
+
+      function refreshQ3CheckAvailability(){
+        if(q3Check.dataset.locked === "1") return;
+        const remaining = $$('.chip', bankChips).length;
+        q3Check.disabled = remaining !== 0; // bank empty -> can check
+      }
+
+      function moveChipTo(bucketEl, chipEl){
+        const dest = $('.chips', bucketEl);
+        dest.appendChild(chipEl);
+        clearSelection();
+        refreshQ3CheckAvailability();
+      }
+
+      function selectChip(chip){
+        clearSelection();
+        chip.classList.add('selected');
+        selectedChip = chip;
+        buckets.forEach(b => b.classList.add('tapTarget'));
+      }
+
+      function onChipClick(chip){
+        if(!canInteractQ3()) return;
+
+        const parent = chip.closest('[data-bucket]');
+        const parentBucket = parent?.dataset?.bucket || '';
+
+        // If chip is in a category bucket, click returns it to bank
+        if(parentBucket && parentBucket !== 'bank'){
+          bankChips.appendChild(chip);
+          clearSelection();
+          refreshQ3CheckAvailability();
+          return;
+        }
+
+        // chip in bank: toggle selection
+        if(chip.classList.contains('selected')) clearSelection();
+        else selectChip(chip);
+      }
+
+      q3.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if(chip){ onChipClick(chip); return; }
+
+        const bucket = e.target.closest('.bucket');
+        if(bucket && selectedChip){
+          moveChipTo(bucket, selectedChip);
+        }
+      });
+
+      q3.addEventListener('keydown', (e) => {
+        const chip = e.target.closest('.chip');
+        if(!chip) return;
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          onChipClick(chip);
+        }
+      });
+
+      refreshQ3CheckAvailability();
+
+      // ---- Check logic ----
+      function arraysEqual(a,b){
+        if(a.length !== b.length) return false;
+        const sa = [...a].sort().join('|');
+        const sb = [...b].sort().join('|');
+        return sa === sb;
+      }
+
+      function normalizeText(s){
+        return (s||"").replace(/\s+/g,"").replace(/[，。；、]/g,"").trim();
+      }
+
+      function checkQ1(){
+        const ans = $('input[name="q1opt"]:checked', q1)?.value || "";
+        const isCorrect = (ans === "B");
+        const fb = isCorrect
+          ? "✅ 正確！雄蛙以<strong>鳴叫</strong>吸引雌蛙，屬於<strong>求偶</strong>行為。"
+          : "❌ 錯誤。<strong>求偶</strong>是「吸引異性」的行為；請再回到文本找線索。";
+        setQuestionState('q1', isCorrect, fb);
+        lockQuestion('q1');
+        showRedoIfWrong('q1', isCorrect);
+      }
+
+      function checkQ2(){
+        const picked = $$('input[name="q2opt"]:checked', q2).map(x => x.value);
+        const correct = ["A","C"];
+        const isCorrect = arraysEqual(picked, correct);
+        const fb = isCorrect
+          ? "✅ 正確！<strong>A</strong>（把卵黏附保護）與 <strong>C</strong>（孵卵）都屬於<strong>護卵</strong>。"
+          : "❌ 錯誤。<strong>護卵</strong>著重保護卵或孵卵；<strong>育幼</strong>是哺育/餵食幼體，<strong>求偶</strong>是吸引異性。";
+        setQuestionState('q2', isCorrect, fb);
+        lockQuestion('q2');
+        showRedoIfWrong('q2', isCorrect);
+      }
+
+      function checkQ3(){
+        // safety
+        if($$('.chip', bankChips).length !== 0){
+          setQuestionState('q3', false, "❌ 你還有卡片在「待分類」喔！請先把全部卡片放入類別。");
+          return;
+        }
+        let ok = true;
+        buckets.forEach(bucket => {
+          const bucketName = bucket.dataset.bucket;
+          $$('.chip', bucket).forEach(ch => {
+            if(ch.dataset.correct !== bucketName) ok = false;
+          });
+        });
+
+        const fb = ok
+          ? "✅ 正確！你已把卡片正確分類到<strong>求偶 / 護卵 / 育幼</strong>。"
+          : "❌ 還差一點！有些卡片放錯類別了。請想想：<strong>求偶</strong>吸引異性、<strong>護卵</strong>保護卵/孵卵、<strong>育幼</strong>哺育/餵食幼體。";
+        setQuestionState('q3', ok, fb);
+        lockQuestion('q3');
+        showRedoIfWrong('q3', ok);
+        clearSelection();
+      }
+
+      function checkQ4(){
+        const ans = normalizeText(q4input.value);
+        const isCorrect = (ans === "存活");
+        const fb = isCorrect
+          ? "✅ 正確！護卵與育幼行為可以提高後代<strong>存活率</strong>。"
+          : "❌ 錯誤。請回到「育幼」段落最後一句找關鍵詞：提高後代____率。";
+        setQuestionState('q4', isCorrect, fb);
+        lockQuestion('q4');
+        showRedoIfWrong('q4', isCorrect);
+      }
+
+      // Bind check buttons
+      $$('.checkBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qid = btn.dataset.check;
+          if(btn.dataset.locked === "1") return;
+          if(qid === 'q1') checkQ1();
+          if(qid === 'q2') checkQ2();
+          if(qid === 'q3') checkQ3();
+          if(qid === 'q4') checkQ4();
+        });
+      });
+
+      // Redo buttons
+      $$('.redoBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qid = btn.dataset.redo;
+
+          if(qid === 'q1'){
+            unlockQuestion('q1');
+            $$('input[name="q1opt"]', q1).forEach(r => r.checked = false);
+          }
+
+          if(qid === 'q2'){
+            unlockQuestion('q2');
+            $$('input[name="q2opt"]', q2).forEach(c => c.checked = false);
+          }
+
+          if(qid === 'q3'){
+            unlockQuestion('q3');
+
+            // move all chips back to bank
+            const all = $$('.chip', q3);
+            bankChips.innerHTML = "";
+            all.forEach(ch => {
+              ch.removeAttribute('aria-disabled');
+              bankChips.appendChild(ch);
+            });
+
+            // reshuffle on redo
+            shuffleChildren(bankChips);
+
+            clearSelection();
+            refreshQ3CheckAvailability();
+          }
+
+          if(qid === 'q4'){
+            unlockQuestion('q4');
+            q4input.value = "";
+          }
+        });
+      });
+
+      updateNav();
+    })();
+  </script>
+</body>
+</html>

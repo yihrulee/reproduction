@@ -1,0 +1,1504 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>開花植物的有性生殖｜世界地圖 × 小遊戲評量</title>
+  <style>
+    :root{
+      --bg1:#f6fbff;
+      --bg2:#eef6ff;
+      --card:#ffffff;
+      --ink:#102a43;
+      --muted:#52606d;
+      --line:#d9e2ec;
+      --shadow:0 12px 28px rgba(16,42,67,.12);
+      --radius:18px;
+      --radius2:14px;
+      --btn:#2f6feb;
+      --good:#1b9e57;
+      --goodbg:#e7f7ee;
+      --bad:#d64545;
+      --badbg:#fdecec;
+      --warn:#ffb703;
+      --warnbg:#fff6df;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial, sans-serif;
+      color:var(--ink);
+      background: radial-gradient(900px 520px at 10% -10%, #e8f3ff 0%, transparent 60%),
+                  radial-gradient(900px 620px at 90% 0%, #e8fff2 0%, transparent 55%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .banner{
+      width:100%;
+      padding: 22px 16px 18px;
+      background: linear-gradient(90deg, #2f6feb, #20c997);
+      color:#fff;
+    }
+    .wrap{max-width: 1040px; margin: 0 auto; padding: 0 14px;}
+    .title{
+      display:flex; gap:12px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap;
+    }
+    .title h1{margin:0; font-size: 22px; letter-spacing:.5px}
+    .title .sub{opacity:.92; font-size:13px}
+    .panel{
+      margin: 14px auto 16px;
+      padding: 14px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+    }
+    .hud{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+    }
+    .hud .left, .hud .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pill b{color:var(--ink)}
+    .dot{width:10px;height:10px;border-radius:999px;background:#94a3b8}
+    .dot.good{background: var(--good)}
+    .dot.bad{background: var(--bad)}
+
+    .card{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fff;
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .cardHead h2{margin:0; font-size:16px}
+    .small{font-size:12px; color: var(--muted); line-height:1.5}
+    .btn{
+      appearance:none;
+      border:none;
+      background: var(--btn);
+      color:#fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.2px;
+      box-shadow: 0 10px 18px rgba(47,111,235,.18);
+    }
+    .btn.ghost{
+      background:#fff;
+      color:var(--ink);
+      border:1px solid var(--line);
+      box-shadow:none;
+      font-weight:800;
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .correct{
+      border: 2px solid rgba(27,158,87,.45) !important;
+      background: var(--goodbg) !important;
+      color:#0b3d21 !important;
+    }
+    .incorrect{
+      border: 2px solid rgba(214,69,69,.45) !important;
+      background: var(--badbg) !important;
+      color:#5b0b0b !important;
+    }
+    .warn{
+      border: 2px solid rgba(255,183,3,.35) !important;
+      background: var(--warnbg) !important;
+      color:#5a3b00 !important;
+    }
+    .feedback{
+      margin-top:10px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      background:#fff;
+      color: var(--muted);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      min-height:46px;
+    }
+    .feedback .icon{font-size:18px; line-height:1.2}
+    .feedback .msg{line-height:1.5}
+
+    /* World Map */
+    .map{
+      padding: 14px;
+    }
+    .mapCanvas{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(900px 260px at 10% 15%, rgba(47,111,235,.12), transparent 60%),
+        radial-gradient(900px 260px at 90% 25%, rgba(32,201,151,.12), transparent 60%),
+        linear-gradient(180deg, #f8fbff, #ffffff);
+      overflow:hidden;
+      min-height: 420px;
+    }
+    .mapTrack{
+      position:relative;
+      width:100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      height: 420px;
+    }
+    .path{
+      position:absolute; inset:0;
+      pointer-events:none;
+      width:100%;
+      height:100%;
+    }
+        .nodeRows{
+      position:absolute; left:0; right:0; top:0; bottom:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap: 18px;
+      padding: 42px 28px 36px;
+    }
+    .nodeRow{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nodeRow.row1{justify-content:center;}
+    .nodeRow.row2{justify-content:center;}
+    @media (max-width: 700px){
+      .nodeRows{padding: 34px 18px 26px;}
+      .node{width: 156px;}
+    }
+
+    .node{
+      width: 168px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background:#fff;
+      padding: 10px 10px 8px;
+      box-shadow: 0 10px 18px rgba(16,42,67,.10);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, filter .08s ease;
+      position:relative;
+    }
+
+    /* Stage color blocks (讓每一關更醒目) */
+    .node.stage1{border-color: rgba(47,111,235,.35); background: linear-gradient(180deg, rgba(47,111,235,.22), #ffffff 58%);}
+    .node.stage2{border-color: rgba(32,201,151,.35); background: linear-gradient(180deg, rgba(32,201,151,.22), #ffffff 58%);}
+    .node.stage3{border-color: rgba(124,58,237,.30); background: linear-gradient(180deg, rgba(124,58,237,.20), #ffffff 58%);}
+    .node.stage4{border-color: rgba(255,183,3,.40); background: linear-gradient(180deg, rgba(255,183,3,.24), #ffffff 58%);}
+    .node.stage5{border-color: rgba(214,69,69,.35); background: linear-gradient(180deg, rgba(214,69,69,.22), #ffffff 58%);}
+
+    
+    .node:hover{filter: brightness(.99); transform: translateY(-1px)}
+    .node:active{transform: translateY(0px)}
+    .node.locked{
+      opacity:.55;
+      cursor:not-allowed;
+      filter: grayscale(.15);
+    }
+    .node .top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .badge{
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background:#fff;
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+    }
+    .badge .miniDot{
+      width:8px;height:8px;border-radius:999px;background:#94a3b8;
+    }
+    .badge.done .miniDot{background: var(--good)}
+    .badge.lock .miniDot{background: var(--bad)}
+    .node h3{
+      margin: 8px 0 6px;
+      font-size: 15px;
+      letter-spacing:.2px;
+    }
+    .node p{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+    .node .emoji{
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      display:grid;
+      place-items:center;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .mapFooter{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .progressBar{
+      flex: 1;
+      min-width: 220px;
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      overflow:hidden;
+    }
+    .progressBar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, #2f6feb, #20c997);
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+
+    /* Mini-game area */
+    .content{
+      padding: 12px;
+    }
+    .screen{
+      display:none;
+    }
+    .screen.active{display:block}
+    .screenTitle{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .screenTitle h3{margin:0; font-size:16px}
+    .meta{
+      font-size:12px; color: var(--muted);
+    }
+    /* 每一關標題後的提示：字更大、紅色（不套用到世界地圖說明） */
+    .screen:not(#screenMap) .screenTitle .meta{
+      font-size:14px;
+      color:#d11a2a;
+      font-weight:800;
+    }
+    .sep{height:1px;background:var(--line);margin:12px 0}
+
+    /* Game 1: click-to-place */
+    .matchGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .matchGrid{grid-template-columns: 1fr}
+    }
+    .tokens, .slots{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px;
+      background:#fff;
+    }
+    .tokenRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+    .token{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      font-size: 13px;
+    }
+    .token.selected{
+      outline: 3px solid rgba(47,111,235,.25);
+      border-color: rgba(47,111,235,.55);
+    }
+    .token.used{
+      opacity:.45;
+      cursor:not-allowed;
+      text-decoration: line-through;
+    }
+    .slotRow{
+      display:grid;
+      gap:8px;
+      margin-top:8px;
+    }
+    .slot{
+      border:1px dashed rgba(82,96,109,.45);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      cursor:pointer;
+    }
+    .slot b{font-size: 13px}
+    .slot .filled{
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background:#fff;
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 86px;
+      text-align:center;
+    }
+
+    /* Game 2: whack style */
+    .moleHUD{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 12px;
+      background:#fff;
+      margin-bottom: 10px;
+    }
+    .moleGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .moleGrid{grid-template-columns: repeat(2, 1fr);}
+    }
+    .hole{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      height: 92px;
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .pop{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      font-size: 13px;
+      box-shadow: 0 10px 18px rgba(16,42,67,.12);
+    }
+    .pop.good{
+      border-color: rgba(27,158,87,.45);
+      background: rgba(27,158,87,.08);
+    }
+    .pop.bad{
+      border-color: rgba(214,69,69,.45);
+      background: rgba(214,69,69,.08);
+    }
+    .pop.bonus{
+      border-color: rgba(255,183,3,.55);
+      background: rgba(255,183,3,.10);
+    }
+
+    /* Game 3: order */
+    .orderWrap{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px;
+      background:#fff;
+    }
+    .orderList{
+      list-style:none;
+      padding:0;
+      margin: 10px 0 0;
+      display:grid;
+      gap:8px;
+    }
+    .orderItem{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+    }
+    .orderItem .name{
+      font-weight:900;
+      color: var(--ink);
+    }
+    .orderItem .moves{
+      display:flex; gap:8px;
+    }
+    .miniBtn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 12px;
+      padding: 6px 10px;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .miniBtn:disabled{opacity:.5; cursor:not-allowed}
+
+    /* Game 4: memory */
+    .memoryHUD{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 12px;
+      background:#fff;
+      margin-bottom: 10px;
+    }
+    .memoryGrid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 720px){ .memoryGrid{grid-template-columns: repeat(3, 1fr);} }
+    @media (max-width: 520px){ .memoryGrid{grid-template-columns: repeat(2, 1fr);} }
+    .cardBtn{
+      height: 86px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      padding: 6px 8px;
+      text-align:center;
+      box-shadow: 0 10px 18px rgba(16,42,67,.10);
+    }
+    .cardBtn.revealed{
+      border-color: rgba(47,111,235,.55);
+      background: rgba(47,111,235,.08);
+    }
+    .cardBtn.matched{
+      border-color: rgba(27,158,87,.55);
+      background: rgba(27,158,87,.10);
+      cursor:not-allowed;
+      opacity:.9;
+    }
+
+    /* Boss */
+    .bossChoices{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    .choice{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
+      padding: 10px 12px;
+      cursor:pointer;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .choice input{margin-top:3px}
+    .choice b{display:block}
+    .choice span{display:block; color: var(--muted); font-size: 12px; line-height:1.45}
+
+    /* Footer nav */
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--line);
+      background:#fff;
+    }
+    .nav a{
+      text-decoration:none;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background:#fff;
+      color: var(--ink);
+      font-weight: 900;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .nav a.disabled{
+      opacity:.45;
+      pointer-events:none;
+      cursor:not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <header class="banner">
+    <div class="wrap title">
+      <h1>開花植物的有性生殖｜世界地圖 × 小遊戲評量</h1>
+      <div class="sub">完成 4 個小關 + 1 個 Boss｜通過門檻：60 分｜全通關才解鎖「下一頁」</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel grid">
+      <!-- LEFT: Map + Game -->
+      <div class="card">
+        <div class="cardHead">
+          <h2>世界地圖</h2>
+          <div class="small">點選關卡進入小遊戲｜通關後會出現 ✅，並解鎖下一站（若看不到 Boss，請左右滑動地圖）</div>
+        </div>
+
+        <div class="map">
+          <div class="hud" aria-label="總狀態列">
+            <div class="left">
+              <span class="pill"><span class="dot" id="dot"></span><b id="stateText">進度</b></span>
+              <span class="pill">已完成 <b id="doneText">0</b>/5</span>
+              <span class="pill">總分 <b id="scoreText">0</b>/100</span>
+            </div>
+            <div class="right">
+              <span class="pill">目前：<b id="whereText">世界地圖</b></span>
+            </div>
+          </div>
+
+          <div class="mapCanvas" aria-label="世界地圖區">
+            <div class="mapTrack">
+            <svg class="path" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
+              <!-- Row 1 path (1→2) -->
+              <path d="M390,150 C450,90 540,210 600,150"
+                    fill="none" stroke="rgba(47,111,235,.22)" stroke-width="10" stroke-linecap="round"/>
+              <path d="M390,150 C450,90 540,210 600,150"
+                    fill="none" stroke="rgba(32,201,151,.22)" stroke-width="4" stroke-linecap="round"/>
+
+              <!-- Row 2 path (3→4→5) -->
+              <path d="M110,285 C260,210 380,360 520,285 C660,210 780,360 930,285"
+                    fill="none" stroke="rgba(47,111,235,.22)" stroke-width="10" stroke-linecap="round"/>
+              <path d="M110,285 C260,210 380,360 520,285 C660,210 780,360 930,285"
+                    fill="none" stroke="rgba(32,201,151,.22)" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+
+            <div class="nodeRows" id="nodeRow">
+              <div class="nodeRow row1">
+                <div class="node stage1" data-node="0">
+                  <div class="top">
+                    <div class="emoji">🏘️</div>
+                    <div class="badge lock" id="badge0"><span class="miniDot"></span>未完成</div>
+                  </div>
+                  <h3>1. 花的構造村</h3>
+                  <p>配對：萼片、花瓣、雄蕊、雌蕊、花托</p>
+                </div>
+                <div class="node locked stage2" data-node="1">
+                  <div class="top">
+                    <div class="emoji">🌾</div>
+                    <div class="badge lock" id="badge1"><span class="miniDot"></span>鎖定</div>
+                  </div>
+                  <h3>2. 授粉草原</h3>
+                  <p>點擊：花粉 + 風/昆蟲/鳥（避開迷思）</p>
+                </div>
+              </div>
+              <div class="nodeRow row2">
+                <div class="node locked stage3" data-node="2">
+                  <div class="top">
+                    <div class="emoji">🕳️</div>
+                    <div class="badge lock" id="badge2"><span class="miniDot"></span>鎖定</div>
+                  </div>
+                  <h3>3. 花粉管隧道</h3>
+                  <p>排序：柱頭→花柱→子房→胚珠→受精</p>
+                </div>
+                <div class="node locked stage4" data-node="3">
+                  <div class="top">
+                    <div class="emoji">🏰</div>
+                    <div class="badge lock" id="badge3"><span class="miniDot"></span>鎖定</div>
+                  </div>
+                  <h3>4. 子房城堡</h3>
+                  <p>翻牌：構造 ↔ 功能（配對成功開門）</p>
+                </div>
+                <div class="node locked stage5" data-node="4">
+                  <div class="top">
+                    <div class="emoji">🔥</div>
+                    <div class="badge lock" id="badge4"><span class="miniDot"></span>鎖定</div>
+                  </div>
+                  <h3>5. Boss：受精之門</h3>
+                  <p>終局判斷：子房→果實、胚珠→種子</p>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="mapFooter">
+            <div class="progressBar" aria-label="進度條"><div id="bar"></div></div>
+            <button class="btn ghost" id="backToMapBtn" disabled>回到世界地圖</button>
+          </div>
+        </div>
+
+        <div class="content">
+          <!-- Screen: Map intro -->
+          <div class="screen active" id="screenMap">
+            <div class="screenTitle">
+              <h3>從「花的構造」一路玩到「受精之門」</h3>
+              <div class="meta">先完成第 1 關，後續關卡才會解鎖</div>
+            </div>
+            <div class="sep"></div>
+            <div class="small">
+              <b>評量規則（固定貫穿）：</b><br/>
+              1) 每關都要按「檢查/提交」才算通過；通過後本關會鎖定。<br/>
+              2) 若答錯會出現「重做本關」。<br/>
+              3) 全部關卡通過 + 總分 ≥ 60 分，才解鎖頁尾「下一頁」。
+            </div>
+            <div class="feedback" id="globalFeedback">
+              <div class="icon">🗺️</div>
+              <div class="msg">點上方世界地圖的第 1 關開始。</div>
+            </div>
+          </div>
+
+          <!-- Screen 1: Matching -->
+          <div class="screen" id="screen1">
+            <div class="screenTitle">
+              <h3>第 1 關：花的構造村（配對）</h3>
+              <div class="meta">做法：先點選上方「零件」，再點選下方「位置」放入</div>
+            </div>
+            <div class="matchGrid">
+              <div class="tokens">
+                <b>可用零件</b>
+                <div class="small">把正確零件放到正確位置（5 個都要放）</div>
+                <div class="tokenRow" id="g1Tokens"></div>
+              </div>
+              <div class="slots">
+                <b>花的構造位置</b>
+                <div class="small">點選位置放入你選到的零件</div>
+                <div class="slotRow" id="g1Slots"></div>
+              </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+              <button class="btn" id="g1Check" disabled>檢查答案</button>
+              <button class="btn ghost" id="g1Retry" style="display:none;">重做本關</button>
+            </div>
+            <div class="feedback" id="g1Feedback">
+              <div class="icon">🧩</div>
+              <div class="msg">完成 5 個位置後，「檢查答案」才會亮起。</div>
+            </div>
+          </div>
+
+          <!-- Screen 2: Whack -->
+          <div class="screen" id="screen2">
+            <div class="screenTitle">
+              <h3>第 2 關：授粉草原（點擊）</h3>
+              <div class="meta">目標：在時間內點到「花粉」與「媒介（風/昆蟲/鳥）」；避開迷思（種子、受精在花藥）</div>
+            </div>
+
+            <div class="moleHUD">
+              <div class="pill">時間 <b id="g2Time">20</b>s</div>
+              <div class="pill">得分 <b id="g2Score">0</b></div>
+              <div class="pill">失誤 <b id="g2Miss">0</b></div>
+              <div class="pill">通過條件：<b>得分 ≥ 10</b> 且 <b>失誤 ≤ 3</b></div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn" id="g2Start">開始</button>
+                <button class="btn ghost" id="g2Retry" style="display:none;">重做本關</button>
+              </div>
+            </div>
+
+            <div class="moleGrid" id="g2Grid" aria-label="授粉點擊格"></div>
+
+            <div class="feedback" id="g2Feedback">
+              <div class="icon">🌾</div>
+              <div class="msg">按「開始」後，道具會隨機出現；點擊正確的才加分。</div>
+            </div>
+          </div>
+
+          <!-- Screen 3: Order -->
+          <div class="screen" id="screen3">
+            <div class="screenTitle">
+              <h3>第 3 關：花粉管隧道（排序）</h3>
+              <div class="meta">用 ↑↓ 調整順序（由上到下）</div>
+            </div>
+
+            <div class="orderWrap">
+              <b>請把「授粉後到受精」的流程排成正確順序</b>
+              <div class="small">提示：花粉落到柱頭（授粉）後，會萌發花粉管，精細胞經花粉管進入胚珠完成受精。</div>
+              <ul class="orderList" id="g3List"></ul>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+              <button class="btn" id="g3Check">檢查答案</button>
+              <button class="btn ghost" id="g3Retry" style="display:none;">重做本關</button>
+            </div>
+
+            <div class="feedback" id="g3Feedback">
+              <div class="icon">🕳️</div>
+              <div class="msg">排好後按「檢查答案」。</div>
+            </div>
+          </div>
+
+          <!-- Screen 4: Memory -->
+          <div class="screen" id="screen4">
+            <div class="screenTitle">
+              <h3>第 4 關：子房城堡（翻牌配對）</h3>
+              <div class="meta">翻開兩張意義相符的卡片即可配對成功（共 6 組）</div>
+            </div>
+
+            <div class="memoryHUD">
+              <div class="pill">已配對 <b id="g4Matched">0</b>/6</div>
+              <div class="pill">翻牌次數 <b id="g4Moves">0</b></div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn" id="g4Submit" disabled>提交通關</button>
+                <button class="btn ghost" id="g4Retry" style="display:none;">重做本關</button>
+              </div>
+            </div>
+
+            <div class="memoryGrid" id="g4Grid" aria-label="翻牌區"></div>
+
+            <div class="feedback" id="g4Feedback">
+              <div class="icon">🏰</div>
+              <div class="msg">全部配對完成後，「提交通關」才會亮起。</div>
+            </div>
+          </div>
+
+          <!-- Screen 5: Boss -->
+          <div class="screen" id="screen5">
+            <div class="screenTitle">
+              <h3>Boss：受精之門（終局判斷）</h3>
+              <div class="meta">作答後鎖定；答錯可重做本題</div>
+            </div>
+
+            <div class="orderWrap">
+              <b>受精後，哪些會發育成果實與種子？</b>
+              <div class="bossChoices" id="g5Choices"></div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <button class="btn" id="g5Check" disabled>檢查答案</button>
+                <button class="btn ghost" id="g5Retry" style="display:none;">重做本題</button>
+              </div>
+            </div>
+
+            <div class="feedback" id="g5Feedback">
+              <div class="icon">🔥</div>
+              <div class="msg">先選一個答案，「檢查答案」才會亮起。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <a href="8.html">← 上一頁</a>
+          <a href="./10.html" id="nextLink" class="disabled">下一頁 →</a>
+        </div>
+      </div>
+</section>
+  </main>
+
+<script>
+(() => {
+  // ---------- State ----------
+  const state = {
+    unlocked: [true, false, false, false, false],
+    cleared:  [false,false,false,false,false],
+    score: 0,
+    where: '世界地圖',
+    lockedButtons: { g1:false, g2:false, g3:false, g4:false, g5:false },
+  };
+
+  // ---------- DOM ----------
+  const dot = document.getElementById('dot');
+  const stateText = document.getElementById('stateText');
+  const doneText = document.getElementById('doneText');
+  const scoreText = document.getElementById('scoreText');
+  const whereText = document.getElementById('whereText');
+  const bar = document.getElementById('bar');
+  const nodes = [...document.querySelectorAll('.node')];
+  const backToMapBtn = document.getElementById('backToMapBtn');
+  const nextLink = document.getElementById('nextLink');
+  const globalFeedback = document.getElementById('globalFeedback');
+
+  const screens = {
+    map: document.getElementById('screenMap'),
+    s1: document.getElementById('screen1'),
+    s2: document.getElementById('screen2'),
+    s3: document.getElementById('screen3'),
+    s4: document.getElementById('screen4'),
+    s5: document.getElementById('screen5'),
+  };
+
+  function setHUD(){
+    const done = state.cleared.filter(Boolean).length;
+    doneText.textContent = String(done);
+    scoreText.textContent = String(state.score);
+    whereText.textContent = state.where;
+    bar.style.width = (done/5*100).toFixed(0) + '%';
+
+    // dot color
+    dot.classList.remove('good','bad');
+    if(done === 5){
+      dot.classList.add('good');
+      stateText.textContent = '完成';
+    } else {
+      stateText.textContent = '進度';
+    }
+
+    // unlock next page if all cleared and score >= 60
+    if(done === 5 && state.score >= 60){
+      nextLink.classList.remove('disabled');
+      globalFeedback.classList.remove('incorrect','warn');
+      globalFeedback.classList.add('correct');
+      globalFeedback.querySelector('.icon').textContent = '✅';
+      globalFeedback.querySelector('.msg').textContent = `全通關 + 分數 ${state.score}/100（≥60）！「下一頁」已解鎖。`;
+    }
+
+    // node visual updates
+    nodes.forEach((n, idx) => {
+      const badge = document.getElementById('badge'+idx);
+      if(state.cleared[idx]){
+        n.classList.remove('locked');
+        badge.classList.remove('lock');
+        badge.classList.add('done');
+        badge.innerHTML = '<span class="miniDot"></span>已完成';
+      } else if(state.unlocked[idx]){
+        n.classList.remove('locked');
+        badge.classList.remove('done');
+        badge.classList.remove('lock');
+        badge.innerHTML = '<span class="miniDot" style="background: var(--warn);"></span>可挑戰';
+      } else {
+        n.classList.add('locked');
+        badge.classList.remove('done');
+        badge.classList.add('lock');
+        badge.innerHTML = '<span class="miniDot"></span>鎖定';
+      }
+    });
+  }
+
+  function showScreen(key){
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[key].classList.add('active');
+    backToMapBtn.disabled = (key === 'map');
+    state.where = ({
+      map:'世界地圖',
+      s1:'花的構造村',
+      s2:'授粉草原',
+      s3:'花粉管隧道',
+      s4:'子房城堡',
+      s5:'受精之門'
+    })[key] || '世界地圖';
+    setHUD();
+    if(key === 'map') updateGlobalPrompt();
+  }
+
+  backToMapBtn.addEventListener('click', () => showScreen('map'));
+
+  nodes.forEach(node => {
+    node.addEventListener('click', () => {
+      const idx = Number(node.dataset.node);
+      if(!state.unlocked[idx]) return;
+      if(idx === 0) showScreen('s1');
+      if(idx === 1) showScreen('s2');
+      if(idx === 2) showScreen('s3');
+      if(idx === 3) showScreen('s4');
+      if(idx === 4) showScreen('s5');
+    });
+  });
+
+  // ---------- Scoring helpers ----------
+  function addScore(delta){
+    state.score = Math.max(0, Math.min(100, state.score + delta));
+    setHUD();
+  }
+  function unlockNext(idx){
+    if(idx+1 < state.unlocked.length) state.unlocked[idx+1] = true;
+    setHUD();
+  }
+  function markCleared(idx){
+    state.cleared[idx] = true;
+    unlockNext(idx);
+    setHUD();
+  }
+
+  function setFeedback(el, kind, icon, msg){
+    el.classList.remove('correct','incorrect','warn');
+    if(kind) el.classList.add(kind);
+    el.querySelector('.icon').textContent = icon;
+    el.querySelector('.msg').textContent = msg;
+  }
+
+  function updateGlobalPrompt(){
+    // 依目前解鎖進度，提示學生點選下一個要挑戰的關卡
+    const done = state.cleared.filter(Boolean).length;
+
+    // 若已符合解鎖下一頁條件，setHUD 會顯示完成提示，這裡不覆蓋
+    if(done === 5 && state.score >= 60) return;
+
+    // 找下一個「已解鎖且尚未完成」的關卡
+    const nextIdx = state.unlocked.findIndex((u, i) => u && !state.cleared[i]);
+
+    if(nextIdx !== -1){
+      setFeedback(globalFeedback, '', '🗺️', `點上方世界地圖的第 ${nextIdx + 1} 關開始。`);
+      return;
+    }
+
+    // 若全部完成但分數不足
+    if(done === 5 && state.score < 60){
+      setFeedback(globalFeedback, 'warn', '⚠️', `你已全通關，但總分 ${state.score}/100 未達 60 分，請老師允許重做或調整配分。`);
+      return;
+    }
+
+    // 預設
+    setFeedback(globalFeedback, '', '🗺️', '點上方世界地圖的第 1 關開始。');
+  }
+
+  // 小工具：洗牌（讓題目/零件順序隨機）
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+
+  // =========================================================
+  // Game 1: click-to-place matching
+  // =========================================================
+  const g1TokensEl = document.getElementById('g1Tokens');
+  const g1SlotsEl = document.getElementById('g1Slots');
+  const g1Check = document.getElementById('g1Check');
+  const g1Retry = document.getElementById('g1Retry');
+  const g1Fb = document.getElementById('g1Feedback');
+
+  const g1Data = [
+    {token:'萼片', slot:'保護花的外層'},
+    {token:'花瓣', slot:'吸引傳粉者（顏色/香味）'},
+    {token:'雄蕊', slot:'產生花粉（花藥）'},
+    {token:'雌蕊', slot:'含柱頭/花柱/子房'},
+    {token:'花托', slot:'各構造著生處'},
+  ];
+  let g1TokenOrder = shuffle(g1Data.map(d => d.token));
+  let g1Selected = null;
+  let g1Placement = {}; // slotText -> token
+  let g1Used = new Set();
+
+  function g1Render(){
+    g1TokensEl.innerHTML = '';
+    g1TokenOrder.forEach(tok => {
+      const d = g1Data.find(x => x.token === tok);
+      if(!d) return;
+      const b = document.createElement('button');
+      b.className = 'token';
+      b.textContent = d.token;
+      if(g1Selected === d.token) b.classList.add('selected');
+      if(g1Used.has(d.token)) b.classList.add('used');
+      b.disabled = g1Used.has(d.token) || state.cleared[0];
+      b.addEventListener('click', () => {
+        g1Selected = d.token;
+        g1Render();
+      });
+      g1TokensEl.appendChild(b);
+    });
+
+    g1SlotsEl.innerHTML = '';
+    g1Data.forEach(d => {
+      const slot = document.createElement('div');
+      slot.className = 'slot';
+      slot.innerHTML = `<b>${d.slot}</b><span class="filled">${g1Placement[d.slot] || '（點此放入）'}</span>`;
+      slot.style.cursor = state.cleared[0] ? 'not-allowed' : 'pointer';
+      slot.addEventListener('click', () => {
+        if(state.cleared[0]) return;
+        if(!g1Selected) return;
+        // if already filled, free old token
+        const prev = g1Placement[d.slot];
+        if(prev) g1Used.delete(prev);
+        g1Placement[d.slot] = g1Selected;
+        g1Used.add(g1Selected);
+        g1Selected = null;
+        g1Render();
+        g1UpdateCheck();
+      });
+      g1SlotsEl.appendChild(slot);
+    });
+  }
+
+  function g1UpdateCheck(){
+    const filled = g1Data.every(d => !!g1Placement[d.slot]);
+    g1Check.disabled = !filled || state.cleared[0] || state.lockedButtons.g1;
+  }
+
+  g1Check.addEventListener('click', () => {
+    if(state.lockedButtons.g1 || state.cleared[0]) return;
+    state.lockedButtons.g1 = true;
+    const allCorrect = g1Data.every(d => g1Placement[d.slot] === d.token);
+    if(allCorrect){
+      addScore(25);
+      markCleared(0);
+      setFeedback(g1Fb, 'correct', '✅', '第 1 關通過！你已掌握典型花的構造。');
+      g1Check.disabled = true;
+      g1Retry.style.display = 'none';
+      // lock interactions
+      g1Render();
+      setTimeout(()=>showScreen('map'), 450);
+    } else {
+      setFeedback(g1Fb, 'incorrect', '❌', '還有配對錯誤：請按「重做本關」重新嘗試。');
+      g1Retry.style.display = 'inline-block';
+      g1Check.disabled = true;
+    }
+  });
+
+  g1Retry.addEventListener('click', () => {
+    g1Selected = null;
+    g1TokenOrder = shuffle(g1Data.map(d => d.token));
+    g1Placement = {};
+    g1Used = new Set();
+    state.lockedButtons.g1 = false;
+    g1Retry.style.display = 'none';
+    setFeedback(g1Fb, '', '🧩', '重新開始：完成 5 個位置後再檢查答案。');
+    g1Render();
+    g1UpdateCheck();
+  });
+
+  // Init game 1
+  g1Render();
+  g1UpdateCheck();
+
+  // =========================================================
+  // Game 2: Whack
+  // =========================================================
+  const g2Grid = document.getElementById('g2Grid');
+  const g2Start = document.getElementById('g2Start');
+  const g2Retry = document.getElementById('g2Retry');
+  const g2Time = document.getElementById('g2Time');
+  const g2ScoreEl = document.getElementById('g2Score');
+  const g2MissEl = document.getElementById('g2Miss');
+  const g2Fb = document.getElementById('g2Feedback');
+
+  const holes = 9;
+  let g2 = { running:false, t:20, score:0, miss:0, timer:null, popTimer:null };
+
+  function g2ResetUI(){
+    g2Time.textContent = String(g2.t);
+    g2ScoreEl.textContent = String(g2.score);
+    g2MissEl.textContent = String(g2.miss);
+  }
+
+  function g2BuildGrid(){
+    g2Grid.innerHTML = '';
+    for(let i=0;i<holes;i++){
+      const hole = document.createElement('div');
+      hole.className = 'hole';
+      hole.dataset.i = String(i);
+      g2Grid.appendChild(hole);
+    }
+  }
+
+  const g2Pool = [
+    {text:'花粉', type:'good', pts:2},
+    {text:'風', type:'bonus', pts:1},
+    {text:'昆蟲', type:'bonus', pts:1},
+    {text:'鳥', type:'bonus', pts:1},
+    {text:'種子', type:'bad', pts:-2},
+    {text:'受精在花藥', type:'bad', pts:-2},
+  ];
+
+  function g2PopOne(){
+    if(!g2.running) return;
+    const holeEls = [...g2Grid.querySelectorAll('.hole')];
+    const target = holeEls[Math.floor(Math.random()*holeEls.length)];
+    if(target.querySelector('.pop')) return; // already occupied
+
+    const item = g2Pool[Math.floor(Math.random()*g2Pool.length)];
+    const btn = document.createElement('button');
+    btn.className = 'pop ' + item.type;
+    btn.textContent = item.text;
+    btn.addEventListener('click', () => {
+      if(!g2.running) return;
+      // score
+      if(item.type === 'bad'){
+        g2.miss += 1;
+        g2.score = Math.max(0, g2.score + item.pts);
+      } else {
+        g2.score = Math.max(0, g2.score + item.pts);
+      }
+      g2ResetUI();
+      btn.remove();
+    });
+
+    target.appendChild(btn);
+
+    // auto disappear
+    const life = 700 + Math.random()*450;
+    setTimeout(() => { if(btn.isConnected) btn.remove(); }, life);
+  }
+
+  function g2Tick(){
+    if(!g2.running) return;
+    g2.t -= 1;
+    g2Time.textContent = String(g2.t);
+    if(g2.t <= 0){
+      g2Stop();
+    }
+  }
+
+  function g2StartRun(){
+    if(state.cleared[1]) return;
+    g2.running = true;
+    g2.t = 20;
+    g2.score = 0;
+    g2.miss = 0;
+    g2ResetUI();
+
+    g2Start.disabled = true;
+    g2Retry.style.display = 'none';
+    setFeedback(g2Fb, '', '🌾', '進行中：點到花粉與媒介加分，點到迷思扣分/記失誤。');
+
+    g2.timer = setInterval(g2Tick, 1000);
+    g2.popTimer = setInterval(g2PopOne, 330);
+    // initial burst
+    for(let i=0;i<3;i++) setTimeout(g2PopOne, i*120);
+  }
+
+  function g2Stop(){
+    g2.running = false;
+    clearInterval(g2.timer);
+    clearInterval(g2.popTimer);
+    // clear remaining pops
+    g2Grid.querySelectorAll('.pop').forEach(p => p.remove());
+
+    const pass = (g2.score >= 10) && (g2.miss <= 3);
+    if(pass){
+      addScore(25);
+      markCleared(1);
+      setFeedback(g2Fb, 'correct', '✅', `第 2 關通過！你的得分 ${g2.score}，失誤 ${g2.miss}。`);
+      g2Start.disabled = true;
+      g2Retry.style.display = 'none';
+      setTimeout(()=>showScreen('map'), 450);
+    } else {
+      setFeedback(g2Fb, 'incorrect', '❌', `未通過：得分 ${g2.score}（需 ≥10）/ 失誤 ${g2.miss}（需 ≤3）。按「重做本關」再試一次。`);
+      g2Retry.style.display = 'inline-block';
+      g2Start.disabled = true;
+    }
+  }
+
+  g2Start.addEventListener('click', g2StartRun);
+  g2Retry.addEventListener('click', () => {
+    g2Start.disabled = false;
+    g2Retry.style.display = 'none';
+    setFeedback(g2Fb, '', '🌾', '按「開始」後，道具會隨機出現；點擊正確的才加分。');
+  });
+
+  g2BuildGrid();
+  g2ResetUI();
+
+  // =========================================================
+  // Game 3: Order
+  // =========================================================
+  const g3List = document.getElementById('g3List');
+  const g3Check = document.getElementById('g3Check');
+  const g3Retry = document.getElementById('g3Retry');
+  const g3Fb = document.getElementById('g3Feedback');
+
+  const g3Correct = [
+    '花粉落到柱頭（授粉）',
+    '花粉萌發花粉管',
+    '精細胞經花粉管進入子房',
+    '精細胞到達胚珠',
+    '卵與精細胞結合受精'
+  ];
+  let g3Items = [];
+
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function g3Render(){
+    g3List.innerHTML = '';
+    g3Items.forEach((txt, idx) => {
+      const li = document.createElement('li');
+      li.className = 'orderItem';
+      li.innerHTML = `
+        <div class="name">${idx+1}. ${txt}</div>
+        <div class="moves">
+          <button class="miniBtn" data-act="up" ${idx===0 || state.cleared[2] ? 'disabled':''}>↑</button>
+          <button class="miniBtn" data-act="down" ${idx===g3Items.length-1 || state.cleared[2] ? 'disabled':''}>↓</button>
+        </div>
+      `;
+      li.querySelectorAll('.miniBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if(state.cleared[2]) return;
+          const act = btn.dataset.act;
+          if(act === 'up' && idx > 0){
+            [g3Items[idx-1], g3Items[idx]] = [g3Items[idx], g3Items[idx-1]];
+          }
+          if(act === 'down' && idx < g3Items.length-1){
+            [g3Items[idx+1], g3Items[idx]] = [g3Items[idx], g3Items[idx+1]];
+          }
+          g3Render();
+        });
+      });
+      g3List.appendChild(li);
+    });
+    g3Check.disabled = state.cleared[2] || state.lockedButtons.g3;
+  }
+
+  function g3Reset(){
+    g3Items = shuffle(g3Correct);
+    state.lockedButtons.g3 = false;
+    g3Retry.style.display = 'none';
+    setFeedback(g3Fb, '', '🕳️', '排好後按「檢查答案」。');
+    g3Render();
+  }
+
+  g3Check.addEventListener('click', () => {
+    if(state.lockedButtons.g3 || state.cleared[2]) return;
+    state.lockedButtons.g3 = true;
+    const ok = g3Items.every((x,i) => x === g3Correct[i]);
+    if(ok){
+      addScore(20);
+      markCleared(2);
+      setFeedback(g3Fb, 'correct', '✅', '第 3 關通過！你已掌握授粉後到受精的流程。');
+      g3Retry.style.display = 'none';
+      g3Check.disabled = true;
+      g3Render();
+      setTimeout(()=>showScreen('map'), 450);
+    } else {
+      setFeedback(g3Fb, 'incorrect', '❌', '順序仍有錯誤：請按「重做本關」重新嘗試。');
+      g3Retry.style.display = 'inline-block';
+      g3Check.disabled = true;
+    }
+  });
+
+  g3Retry.addEventListener('click', g3Reset);
+  g3Reset();
+
+  // =========================================================
+  // Game 4: Memory
+  // =========================================================
+  const g4Grid = document.getElementById('g4Grid');
+  const g4MatchedEl = document.getElementById('g4Matched');
+  const g4MovesEl = document.getElementById('g4Moves');
+  const g4Submit = document.getElementById('g4Submit');
+  const g4Retry = document.getElementById('g4Retry');
+  const g4Fb = document.getElementById('g4Feedback');
+
+  const g4Pairs = [
+    ['花藥','含大量花粉'],
+    ['柱頭','接收花粉的位置'],
+    ['花粉管','引導精細胞前進'],
+    ['子房','受精後發育成果實'],
+    ['胚珠','受精後發育成種子'],
+    ['雄蕊','花絲 + 花藥']
+  ];
+
+  let g4Cards = []; // {id, text, pairId, revealed, matched}
+  let g4First = null;
+  let g4Lock = false;
+  let g4Moves = 0;
+  let g4Matched = 0;
+
+  function g4Build(){
+    g4Moves = 0;
+    g4Matched = 0;
+    g4First = null;
+    g4Lock = false;
+    g4Submit.disabled = true;
+    g4Retry.style.display = 'none';
+
+    const cards = [];
+    g4Pairs.forEach((p, i) => {
+      cards.push({id:`a${i}`, text:p[0], pairId:i, revealed:false, matched:false});
+      cards.push({id:`b${i}`, text:p[1], pairId:i, revealed:false, matched:false});
+    });
+    // shuffle
+    for(let i=cards.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [cards[i],cards[j]] = [cards[j],cards[i]];
+    }
+    g4Cards = cards;
+    g4Render();
+    g4UpdateHUD();
+    setFeedback(g4Fb, '', '🏰', '全部配對完成後，「提交通關」才會亮起。');
+  }
+
+  function g4UpdateHUD(){
+    g4MatchedEl.textContent = String(g4Matched);
+    g4MovesEl.textContent = String(g4Moves);
+  }
+
+  function g4Render(){
+    g4Grid.innerHTML = '';
+    g4Cards.forEach(card => {
+      const btn = document.createElement('button');
+      btn.className = 'cardBtn';
+      if(card.revealed) btn.classList.add('revealed');
+      if(card.matched) btn.classList.add('matched');
+      btn.disabled = card.matched || g4Lock || state.cleared[3];
+      btn.textContent = (card.revealed || card.matched) ? card.text : '❓';
+      btn.addEventListener('click', () => g4Flip(card.id));
+      g4Grid.appendChild(btn);
+    });
+    if(state.cleared[3]){
+      g4Submit.disabled = true;
+    }
+  }
+
+  function g4Flip(id){
+    if(g4Lock || state.cleared[3]) return;
+    const card = g4Cards.find(c => c.id === id);
+    if(!card || card.revealed || card.matched) return;
+
+    card.revealed = true;
+    g4Render();
+
+    if(!g4First){
+      g4First = card;
+      return;
+    }
+
+    // second flip
+    g4Moves += 1;
+    g4UpdateHUD();
+
+    if(g4First.pairId === card.pairId){
+      // match
+      g4First.matched = true;
+      card.matched = true;
+      g4First = null;
+      g4Matched += 1;
+      g4UpdateHUD();
+      g4Render();
+
+      if(g4Matched === 6){
+        g4Submit.disabled = false;
+        setFeedback(g4Fb, 'correct', '✅', '已完成所有配對！可以按「提交通關」。');
+      }
+    } else {
+      // not match -> flip back after delay
+      g4Lock = true;
+      setTimeout(() => {
+        card.revealed = false;
+        g4First.revealed = false;
+        g4First = null;
+        g4Lock = false;
+        g4Render();
+      }, 650);
+    }
+  }
+
+  g4Submit.addEventListener('click', () => {
+    if(state.cleared[3]) return;
+    if(g4Matched !== 6) return;
+    addScore(20);
+    markCleared(3);
+    setFeedback(g4Fb, 'correct', '✅', '第 4 關通過！城堡大門已開，Boss 已解鎖。');
+    g4Submit.disabled = true;
+    g4Retry.style.display = 'none';
+    setTimeout(()=>showScreen('map'), 450);
+  });
+
+  g4Retry.addEventListener('click', g4Build);
+  g4Build();
+
+  // =========================================================
+  // Game 5: Boss (single choice)
+  // =========================================================
+  const g5Choices = document.getElementById('g5Choices');
+  const g5Check = document.getElementById('g5Check');
+  const g5Retry = document.getElementById('g5Retry');
+  const g5Fb = document.getElementById('g5Feedback');
+
+  const bossOptions = [
+    {id:'A', title:'A：子房 → 果實；胚珠 → 種子', desc:'受精後子房膨大成果實；胚珠發育成種子。', correct:true},
+    {id:'B', title:'B：子房 → 種子；胚珠 → 果實', desc:'把果實與種子的來源對調了。', correct:false},
+    {id:'C', title:'C：花藥 → 果實；柱頭 → 種子', desc:'把雄蕊/雌蕊部位混淆了。', correct:false},
+  ];
+  let bossSelected = null;
+  let bossLocked = false;
+
+  function g5Render(){
+    g5Choices.innerHTML = '';
+    bossOptions.forEach(opt => {
+      const label = document.createElement('label');
+      label.className = 'choice';
+      label.innerHTML = `
+        <input type="radio" name="boss" value="${opt.id}" ${bossLocked || state.cleared[4] ? 'disabled':''}>
+        <div>
+          <b>${opt.title}</b>
+          <span>${opt.desc}</span>
+        </div>
+      `;
+      label.addEventListener('click', () => {
+        if(bossLocked || state.cleared[4]) return;
+        bossSelected = opt.id;
+        g5Check.disabled = !bossSelected;
+      });
+      g5Choices.appendChild(label);
+    });
+    g5Check.disabled = !bossSelected || bossLocked || state.cleared[4];
+  }
+
+  g5Check.addEventListener('click', () => {
+    if(bossLocked || state.cleared[4]) return;
+    bossLocked = true;
+    const chosen = bossOptions.find(o => o.id === bossSelected);
+    if(chosen && chosen.correct){
+      addScore(10);
+      markCleared(4);
+      setFeedback(g5Fb, 'correct', '🎉', 'Boss 擊破！你已完成「受精後：子房→果實、胚珠→種子」。');
+      g5Retry.style.display = 'none';
+      g5Check.disabled = true;
+      setTimeout(()=>showScreen('map'), 450);
+    } else {
+      setFeedback(g5Fb, 'incorrect', '❌', '答案不正確：請按「重做本題」再試一次。');
+      g5Retry.style.display = 'inline-block';
+      g5Check.disabled = true;
+    }
+  });
+
+  g5Retry.addEventListener('click', () => {
+    bossSelected = null;
+    bossLocked = false;
+    // reset radios
+    document.querySelectorAll('input[name="boss"]').forEach(r => r.checked = false);
+    g5Retry.style.display = 'none';
+    setFeedback(g5Fb, '', '🔥', '先選一個答案，「檢查答案」才會亮起。');
+    g5Render();
+  });
+
+  g5Render();
+
+  // ---------- Init ----------
+  showScreen('map');
+  setHUD();
+  updateGlobalPrompt();
+})();
+</script>
+</body>
+</html>

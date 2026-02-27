@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>受精作用的場所｜互動練習</title>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --shadow:0 10px 25px rgba(2,6,23,.08);
+      --radius:18px;
+
+      --good:#16a34a;
+      --good-bg:#dcfce7;
+      --bad:#dc2626;
+      --bad-bg:#fee2e2;
+
+      --btn:#2563eb;
+      --btnText:#ffffff;
+      --disabled:#94a3b8;
+      --disabledBg:#e2e8f0;
+
+      --kw1:#7c3aed; /* 體外受精 */
+      --kw2:#2563eb; /* 體內受精/水中/體內 */
+      --kw3:#16a34a; /* 動物例子 */
+      --kw4:#ea580c; /* 卵/珊瑚 */
+      --kw5:#db2777; /* 精子 */
+      --kw6:#0f766e; /* 成功/環境/交配 */
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial,sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, #e0e7ff 0%, rgba(224,231,255,0) 60%),
+                  radial-gradient(900px 650px at 90% 10%, #cffafe 0%, rgba(207,250,254,0) 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    /* Full-width banner header */
+    .hero{
+      width:100%;
+      padding:34px 18px 26px;
+      background:
+        linear-gradient(120deg, rgba(37,99,235,.95), rgba(124,58,237,.92)),
+        radial-gradient(1000px 600px at 20% 10%, rgba(255,255,255,.25), rgba(255,255,255,0) 55%);
+      color:#fff;
+    }
+    .hero-inner{
+      max-width:1000px;
+      margin:0 auto;
+      display:flex;
+      gap:16px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .hero h1{
+      margin:0;
+      font-size:clamp(22px, 3.2vw, 34px);
+      letter-spacing:.5px;
+    }
+    .hero p{
+      margin:8px 0 0;
+      color:rgba(255,255,255,.9);
+      max-width:70ch;
+      font-size:14.5px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      backdrop-filter: blur(6px);
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .wrap{
+      max-width:1000px;
+      margin:18px auto 44px;
+      padding:0 18px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+
+    .teach p{margin:0 0 10px; text-indent:2em;}
+    .teach p:last-child{margin-bottom:0}
+
+    .kw{
+      font-weight:800;
+      padding:0 .25em;
+      border-radius:.55em;
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(15,23,42,.08);
+      white-space:nowrap;
+    }
+    .kw1{color:var(--kw1)}
+    .kw2{color:var(--kw2)}
+    .kw3{color:var(--kw3)}
+    .kw4{color:var(--kw4)}
+    .kw5{color:var(--kw5)}
+    .kw6{color:var(--kw6)}
+
+    /* ✅ Image aligned with above/below columns (NOT full width) */
+    .photo{
+      margin-top:16px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+    .photo img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+    .caption{
+      font-size:13px;
+      color:var(--muted);
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      background:linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:0 0 12px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size:18px;
+    }
+    .section-title .note{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .q{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    .q.correct{
+      border-color: var(--good);
+      background: linear-gradient(180deg, var(--good-bg), #ffffff);
+    }
+    .q.incorrect{
+      border-color: var(--bad);
+      background: linear-gradient(180deg, var(--bad-bg), #ffffff);
+    }
+    .q h3{
+      margin:0 0 10px;
+      font-size:16px;
+    }
+    .q .sub{
+      margin:-6px 0 10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .options{
+      display:grid;
+      gap:8px;
+      margin:10px 0 12px;
+    }
+    label.opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+    }
+    label.opt:hover{border-color:#cbd5e1}
+    input[type="radio"],input[type="checkbox"]{margin-top:2px}
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin:8px 0;
+    }
+    .row .tag{
+      min-width: 8em;
+      font-weight:950;
+    }
+    select{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      min-width: 240px;
+      font-size:14px;
+    }
+
+    .blank{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      padding:12px;
+      border:1px dashed #cbd5e1;
+      border-radius:14px;
+      background:#fff;
+    }
+    .blank input[type="text"]{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      font-size:14px;
+      min-width: 240px;
+      outline:none;
+    }
+    .blank input[type="text"]:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.15);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:950;
+      cursor:pointer;
+      background:var(--btn);
+      color:var(--btnText);
+      box-shadow:0 10px 20px rgba(37,99,235,.18);
+    }
+    .btn.ghost{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn:disabled, .btn.disabled{
+      cursor:not-allowed;
+      background: var(--disabledBg);
+      color: var(--disabled);
+      box-shadow:none;
+      border:1px solid #cbd5e1;
+    }
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:none;
+    }
+    .feedback.show{display:block}
+    .feedback .title{
+      font-weight:950;
+      margin:0 0 4px;
+    }
+    .feedback .msg{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .footer-nav{
+      margin-top:16px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .navlink{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+    }
+    .navlink:hover{border-color:#cbd5e1}
+    .navlink.disabled{
+      pointer-events:none;
+      background:var(--disabledBg);
+      color:var(--disabled);
+      border-color:#cbd5e1;
+    }
+
+    .tiny{
+      font-size:12.5px;
+      color:var(--muted);
+      margin:10px 0 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1>受精作用的場所</h1>
+        <p>先閱讀三段重點，再完成 4 題多元互動練習。只有全部答對，才會解鎖「下一頁 →」。</p>
+      </div>
+      <div class="chip" aria-label="提示">
+        ✅ 每題提交後鎖定｜❌ 答錯可重做
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card teach" aria-label="教學文本">
+      <div class="section-title">
+        <h2>教學重點</h2>
+        <div class="note">關鍵字已用不同顏色標示</div>
+      </div>
+
+      <p>
+        動物的<span class="kw kw6">受精作用</span>依發生場所不同，可分為<span class="kw kw1">體外受精</span>和<span class="kw kw2">體內受精</span>。
+      </p>
+
+      <p>
+        行<span class="kw kw1">體外受精</span>的動物，例如多數的<span class="kw kw3">兩生類</span>、<span class="kw kw4">珊瑚</span>和<span class="kw kw3">魚類</span>，
+        成熟的雌、雄個體會直接將<span class="kw kw4">卵</span>和<span class="kw kw5">精子</span>排放到<span class="kw kw2">水中</span>，
+        使卵與精子在水中結合。<span class="kw kw1">體外受精</span>的動物常會同時釋出大量的<span class="kw kw4">卵</span>和<span class="kw kw5">精子</span>，
+        以增加<span class="kw kw6">成功受精</span>的機會。
+      </p>
+
+      <p>
+        行<span class="kw kw2">體內受精</span>的動物，例如<span class="kw kw3">昆蟲</span>、<span class="kw kw3">爬蟲類</span>、<span class="kw kw3">鳥類</span>和<span class="kw kw3">哺乳類</span>等，
+        雄性必須藉由<span class="kw kw6">交配行為</span>將<span class="kw kw5">精子</span>送入<span class="kw kw2">雌性體內</span>，
+        使卵與精子在雌性體內結合。<span class="kw kw2">體內受精</span>的動物，<span class="kw kw6">受精環境</span>較不會被干擾和破壞，
+        <span class="kw kw6">成功的機會較高</span>，所釋出<span class="kw kw4">卵</span>的數目通常也比行<span class="kw kw1">體外受精</span>的動物<span class="kw kw6">少</span>。
+      </p>
+    </section>
+
+    <!-- ✅ 圖片與上下欄位對齊（同寬） -->
+    <div class="photo" aria-label="示意照片（與欄位對齊）">
+      <img src="3_1.png" alt="受精作用示意照片（3_1.png）">
+      
+    </div>
+
+    <section class="card" aria-label="互動練習題" style="margin-top:16px;">
+      <div class="section-title">
+        <h2>互動練習題（共 4 題）</h2>
+        <div class="note">題型：單選｜多選｜配對｜短答</div>
+      </div>
+
+      <div class="grid">
+
+        <!-- Q1: Single choice -->
+        <div class="q" id="q1" data-qid="1">
+          <h3>第 1 題｜單選題：哪一句最符合「體內受精」？</h3>
+          <div class="sub">選出最符合文本描述的一句。</div>
+
+          <div class="options" role="radiogroup" aria-label="第1題選項">
+            <label class="opt"><input type="radio" name="q1" value="A"> 卵與精子在水中結合，通常會釋出大量卵與精子。</label>
+            <label class="opt"><input type="radio" name="q1" value="B"> 雄性藉由交配把精子送入雌性體內，使卵與精子在雌性體內結合。</label>
+            <label class="opt"><input type="radio" name="q1" value="C"> 受精方式與發生場所無關，只和卵的大小有關。</label>
+            <label class="opt"><input type="radio" name="q1" value="D"> 所有魚類都屬於體內受精。</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="q1Check" disabled>檢查答案</button>
+            <button class="btn ghost" id="q1Retry" style="display:none;">重做本題</button>
+          </div>
+
+          <div class="feedback" id="q1Fb" aria-live="polite">
+            <div class="title" id="q1FbTitle"></div>
+            <p class="msg" id="q1FbMsg"></p>
+          </div>
+        </div>
+
+        <!-- Q2: Multiple select -->
+        <div class="q" id="q2" data-qid="2">
+          <h3>第 2 題｜多選題：哪些是「體外受精」的例子？</h3>
+          <div class="sub">請勾選「全部正確」選項（可複選）。</div>
+
+          <div class="options" role="group" aria-label="第2題選項">
+            <label class="opt"><input type="checkbox" name="q2" value="amphibian"> 多數兩生類</label>
+            <label class="opt"><input type="checkbox" name="q2" value="coral"> 珊瑚</label>
+            <label class="opt"><input type="checkbox" name="q2" value="fish"> 魚類</label>
+            <label class="opt"><input type="checkbox" name="q2" value="bird"> 鳥類</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="q2Check" disabled>檢查答案</button>
+            <button class="btn ghost" id="q2Retry" style="display:none;">重做本題</button>
+          </div>
+
+          <div class="feedback" id="q2Fb" aria-live="polite">
+            <div class="title" id="q2FbTitle"></div>
+            <p class="msg" id="q2FbMsg"></p>
+          </div>
+        </div>
+
+        <!-- Q3: Matching via dropdown -->
+        <div class="q" id="q3" data-qid="3">
+          <h3>第 3 題｜配對題：將受精方式與「發生場所／特徵」配對</h3>
+          <div class="sub">兩列都必須完成選擇。</div>
+
+          <div class="row">
+            <div class="tag">體外受精</div>
+            <select id="q3A">
+              <option value="">請選擇…</option>
+              <option value="inBody">卵與精子在雌性體內結合</option>
+              <option value="inWater">卵與精子在水中結合</option>
+              <option value="stableEnv">受精環境較不易被干擾</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="tag">體內受精</div>
+            <select id="q3B">
+              <option value="">請選擇…</option>
+              <option value="manyGametes">常釋出大量卵與精子以提高機會</option>
+              <option value="mating">需要交配把精子送入雌性體內</option>
+              <option value="inWater">卵與精子在水中結合</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="q3Check" disabled>檢查答案</button>
+            <button class="btn ghost" id="q3Retry" style="display:none;">重做本題</button>
+          </div>
+
+          <div class="feedback" id="q3Fb" aria-live="polite">
+            <div class="title" id="q3FbTitle"></div>
+            <p class="msg" id="q3FbMsg"></p>
+          </div>
+        </div>
+
+        <!-- Q4: Multiple select -->
+        <div class="q" id="q4" data-qid="4">
+          <h3>第 4 題｜多選題：為什麼體內受精成功機會較高？</h3>
+          <div class="sub">請勾選所有正確原因（可複選）。</div>
+
+          <div class="options" role="group" aria-label="第4題選項">
+            <label class="opt"><input type="checkbox" name="q4" value="stable"> 受精環境較不會被干擾和破壞</label>
+            <label class="opt"><input type="checkbox" name="q4" value="delivered"> 精子送入雌性體內，較不易散失（不易被沖散或分散）</label>
+            <label class="opt"><input type="checkbox" name="q4" value="many"> 需要同時釋出大量卵和精子</label>
+            <label class="opt"><input type="checkbox" name="q4" value="water"> 卵與精子必須在水中結合</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="q4Check" disabled>檢查答案</button>
+            <button class="btn ghost" id="q4Retry" style="display:none;">重做本題</button>
+          </div>
+
+          <div class="feedback" id="q4Fb" aria-live="polite">
+            <div class="title" id="q4FbTitle"></div>
+            <p class="msg" id="q4FbMsg"></p>
+          </div>
+        </div>
+
+
+      </div>
+
+      <p class="tiny">提示：若「檢查答案」不能按，代表你還沒完成該題的作答。</p>
+
+      <nav class="footer-nav" aria-label="頁尾導覽">
+        <a class="navlink" href="2.html">← 上一頁</a>
+        <a class="navlink disabled" id="nextLink" href="./4.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+    const state = { passed: {1:false,2:false,3:false,4:false} };
+
+    function setFeedback(qid, ok, title, msg){
+      const q = document.getElementById('q' + qid);
+      const fb = document.getElementById('q' + qid + 'Fb');
+      document.getElementById('q' + qid + 'FbTitle').textContent = title;
+      document.getElementById('q' + qid + 'FbMsg').textContent = msg;
+
+      q.classList.remove('correct','incorrect');
+      q.classList.add(ok ? 'correct' : 'incorrect');
+      fb.classList.add('show');
+    }
+
+    function lockQuestion(qid){
+      const checkBtn = document.getElementById('q' + qid + 'Check');
+      checkBtn.disabled = true;
+      checkBtn.classList.add('disabled');
+      checkBtn.dataset.locked = "true";
+    }
+
+    function unlockQuestion(qid){
+      const checkBtn = document.getElementById('q' + qid + 'Check');
+      checkBtn.disabled = true;
+      checkBtn.classList.remove('disabled');
+      checkBtn.dataset.locked = "false";
+
+      const q = document.getElementById('q' + qid);
+      q.classList.remove('correct','incorrect');
+      document.getElementById('q' + qid + 'Fb').classList.remove('show');
+    }
+
+    function showRetry(qid, show){
+      document.getElementById('q' + qid + 'Retry').style.display = show ? 'inline-flex' : 'none';
+    }
+
+    function updateNext(){
+      const all = Object.values(state.passed).every(Boolean);
+      const next = document.getElementById('nextLink');
+      if(all){
+        next.classList.remove('disabled');
+        next.setAttribute('aria-disabled','false');
+        next.removeAttribute('tabindex');
+      }else{
+        next.classList.add('disabled');
+        next.setAttribute('aria-disabled','true');
+        next.setAttribute('tabindex','-1');
+      }
+    }
+
+    document.getElementById('nextLink').addEventListener('click', (e)=>{
+      if(e.currentTarget.classList.contains('disabled')) e.preventDefault();
+    });
+
+    ['1','2','3','4'].forEach(id=>{
+      document.getElementById('q'+id+'Check').dataset.locked = "false";
+    });
+
+    // Q1
+    const q1CheckBtn = document.getElementById('q1Check');
+    document.querySelectorAll('input[name="q1"]').forEach(r=>{
+      r.addEventListener('change', ()=>{
+        if(q1CheckBtn.dataset.locked === "true") return;
+        q1CheckBtn.disabled = !document.querySelector('input[name="q1"]:checked');
+      });
+    });
+    q1CheckBtn.addEventListener('click', ()=>{
+      if(q1CheckBtn.dataset.locked === "true") return;
+      const val = (document.querySelector('input[name="q1"]:checked')||{}).value;
+      const ok = val === "B";
+      state.passed[1] = ok;
+      if(ok){
+        setFeedback(1, true, "✅ 正確！", "體內受精：雄性藉由交配把精子送入雌性體內，卵與精子在雌性體內結合。");
+        lockQuestion(1); showRetry(1,false);
+      }else{
+        setFeedback(1, false, "❌ 錯誤", "回到第 3 段：體內受精必須透過交配把精子送入雌性體內，結合地點在體內。");
+        lockQuestion(1); showRetry(1,true);
+      }
+      updateNext();
+    });
+    document.getElementById('q1Retry').addEventListener('click', ()=>{
+      document.querySelectorAll('input[name="q1"]').forEach(x=>x.checked=false);
+      state.passed[1]=false; showRetry(1,false); unlockQuestion(1);
+      q1CheckBtn.disabled=true; updateNext();
+    });
+
+    // Q2
+    const q2CheckBtn = document.getElementById('q2Check');
+    const q2Picked = () => [...document.querySelectorAll('input[name="q2"]')].filter(x=>x.checked).map(x=>x.value);
+
+    document.querySelectorAll('input[name="q2"]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        if(q2CheckBtn.dataset.locked === "true") return;
+        q2CheckBtn.disabled = q2Picked().length === 0;
+      });
+    });
+    q2CheckBtn.addEventListener('click', ()=>{
+      if(q2CheckBtn.dataset.locked === "true") return;
+      const picked = q2Picked().sort();
+      const correct = ['amphibian','coral','fish'].sort();
+      const ok = picked.length === correct.length && picked.every((v,i)=>v===correct[i]);
+      state.passed[2]=ok;
+      if(ok){
+        setFeedback(2, true, "✅ 正確！", "體外受精的例子：多數兩生類、珊瑚、魚類；鳥類屬於體內受精。");
+        lockQuestion(2); showRetry(2,false);
+      }else{
+        setFeedback(2, false, "❌ 再想想", "文本指出體外受精例子是兩生類、珊瑚、魚類；請確認是否誤選了體內受精的鳥類。");
+        lockQuestion(2); showRetry(2,true);
+      }
+      updateNext();
+    });
+    document.getElementById('q2Retry').addEventListener('click', ()=>{
+      document.querySelectorAll('input[name="q2"]').forEach(x=>x.checked=false);
+      state.passed[2]=false; showRetry(2,false); unlockQuestion(2);
+      q2CheckBtn.disabled=true; updateNext();
+    });
+
+    // Q3
+    const q3A = document.getElementById('q3A');
+    const q3B = document.getElementById('q3B');
+    const q3CheckBtn = document.getElementById('q3Check');
+    function q3Answered(){ return q3A.value!=="" && q3B.value!==""; }
+    [q3A,q3B].forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        if(q3CheckBtn.dataset.locked === "true") return;
+        q3CheckBtn.disabled = !q3Answered();
+      });
+    });
+    q3CheckBtn.addEventListener('click', ()=>{
+      if(q3CheckBtn.dataset.locked === "true") return;
+      const ok = (q3A.value==="inWater") && (q3B.value==="mating");
+      state.passed[3]=ok;
+      if(ok){
+        setFeedback(3, true, "✅ 正確！", "體外受精：在水中結合；體內受精：透過交配把精子送入雌性體內。");
+        lockQuestion(3); showRetry(3,false);
+      }else{
+        setFeedback(3, false, "❌ 還差一步", "提示：體外受精＝卵與精子在水中結合；體內受精＝需要交配把精子送入雌性體內。");
+        lockQuestion(3); showRetry(3,true);
+      }
+      updateNext();
+    });
+    document.getElementById('q3Retry').addEventListener('click', ()=>{
+      q3A.value=""; q3B.value="";
+      state.passed[3]=false; showRetry(3,false); unlockQuestion(3);
+      q3CheckBtn.disabled=true; updateNext();
+    });
+
+    // Q4 (multi-select)
+    const q4CheckBtn = document.getElementById('q4Check');
+    const q4Selected = () => [...document.querySelectorAll('input[name="q4"]')].filter(x=>x.checked).map(x=>x.value);
+
+    document.querySelectorAll('input[name="q4"]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        if(q4CheckBtn.dataset.locked === "true") return;
+        q4CheckBtn.disabled = q4Selected().length === 0;
+      });
+    });
+
+    q4CheckBtn.addEventListener('click', ()=>{
+      if(q4CheckBtn.dataset.locked === "true") return;
+      const picked = q4Selected().sort();
+      const correct = ['stable','delivered'].sort();
+      const ok = picked.length === correct.length && picked.every((v,i)=>v===correct[i]);
+      state.passed[4]=ok;
+
+      if(ok){
+        setFeedback(4, true, "✅ 正確！", "體內受精較穩定：受精環境較不會被干擾和破壞，且精子送入雌性體內較不易散失，因此成功機會較高。");
+        lockQuestion(4); showRetry(4,false);
+      }else{
+        setFeedback(4, false, "❌ 不正確", "提示：回到文本第 3 段，重點是『受精環境較不會被干擾和破壞』；另外體內受精需要把精子送入雌性體內。");
+        lockQuestion(4); showRetry(4,true);
+      }
+      updateNext();
+    });
+
+    document.getElementById('q4Retry').addEventListener('click', ()=>{
+      document.querySelectorAll('input[name="q4"]').forEach(x=>x.checked=false);
+      state.passed[4]=false; showRetry(4,false); unlockQuestion(4);
+      q4CheckBtn.disabled=true; updateNext();
+    });
+
+
+    updateNext();
+  </script>
+</body>
+</html>

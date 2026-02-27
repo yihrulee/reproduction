@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>無性生殖｜互動練習</title>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --text:#132038;
+      --muted:#5b6b86;
+      --line:#d7def0;
+      --shadow: 0 10px 24px rgba(18, 38, 80, .10);
+      --radius: 16px;
+
+      --good-b:#168a46;
+      --good-bg:#e7ffef;
+
+      --bad-b:#c53030;
+      --bad-bg:#ffe8e8;
+
+      --btn:#2b59ff;
+      --btnText:#ffffff;
+      --btn2:#eef2ff;
+
+      --kw1:#ff5a5f;
+      --kw2:#6f42c1;
+      --kw3:#0ea5e9;
+      --kw4:#10b981;
+      --kw5:#f59e0b;
+      --kw6:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color:var(--text);
+      background: radial-gradient(1000px 600px at 10% -20%, #dfe8ff 0%, transparent 60%),
+                  radial-gradient(800px 520px at 95% 0%, #e9fff6 0%, transparent 55%),
+                  var(--bg);
+      line-height:1.6;
+    }
+    header{
+      padding: 28px 16px 10px;
+      text-align:center;
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 16px 32px;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size: 28px;
+      letter-spacing:.5px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: 14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin: 14px 0;
+    }
+
+    /* teaching text (kept) */
+    .teaching{
+      font-size: 16px;
+      margin: 0 0 14px;
+    }
+    .kw{
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      white-space: nowrap;
+      display:inline-block;
+      margin: 1px 0;
+    }
+    .kw1{ background: color-mix(in srgb, var(--kw1) 18%, white); color: var(--kw1); border: 1px solid color-mix(in srgb, var(--kw1) 35%, white); }
+    .kw2{ background: color-mix(in srgb, var(--kw2) 16%, white); color: var(--kw2); border: 1px solid color-mix(in srgb, var(--kw2) 35%, white); }
+    .kw3{ background: color-mix(in srgb, var(--kw3) 16%, white); color: var(--kw3); border: 1px solid color-mix(in srgb, var(--kw3) 35%, white); }
+    .kw4{ background: color-mix(in srgb, var(--kw4) 16%, white); color: var(--kw4); border: 1px solid color-mix(in srgb, var(--kw4) 35%, white); }
+    .kw5{ background: color-mix(in srgb, var(--kw5) 16%, white); color: var(--kw5); border: 1px solid color-mix(in srgb, var(--kw5) 35%, white); }
+    .kw6{ background: color-mix(in srgb, var(--kw6) 16%, white); color: var(--kw6); border: 1px solid color-mix(in srgb, var(--kw6) 35%, white); }
+
+    .imgBox{
+      display:flex;
+      justify-content:center;
+    }
+    .imgBox img{
+      width:min(780px, 100%);
+      border-radius: 14px;
+      border:1px solid var(--line);
+      box-shadow: 0 10px 24px rgba(18, 38, 80, .12);
+      object-fit: cover;
+    }
+
+    /* questions */
+    .qHead{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .qTitle{
+      margin:0;
+      font-size: 18px;
+    }
+    .qType{
+      color: var(--muted);
+      font-size: 13px;
+      background:#f2f5ff;
+      border:1px solid var(--line);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .qBody{
+      margin-top: 10px;
+      display:grid;
+      gap: 10px;
+    }
+    .option{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfcff;
+    }
+    .option input{ transform: scale(1.15); }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 720px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .matchRow{
+      display:grid;
+      grid-template-columns: 1fr 300px;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 12px;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fbfcff;
+    }
+    .matchRow select{
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 10px;
+      border:1px solid var(--line);
+      font-size: 15px;
+      background:white;
+    }
+    @media (max-width: 720px){
+      .matchRow{ grid-template-columns: 1fr; }
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    button{
+      appearance:none;
+      border:0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .06s ease, opacity .2s ease;
+    }
+    button:active{ transform: translateY(1px); }
+    .btn{
+      background: var(--btn);
+      color: var(--btnText);
+    }
+    .btn.secondary{
+      background: var(--btn2);
+      color: #23305a;
+      border: 1px solid var(--line);
+    }
+    button[disabled], .disabled{
+      opacity: .45;
+      cursor:not-allowed !important;
+      pointer-events:none;
+    }
+
+    .feedback{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: #f7f9ff;
+      color: #243456;
+      display:none;
+    }
+    .feedback.show{ display:block; }
+
+    /* required classes */
+    .correct{
+      border:2px solid var(--good-b) !important;
+      background: var(--good-bg) !important;
+    }
+    .incorrect{
+      border:2px solid var(--bad-b) !important;
+      background: var(--bad-bg) !important;
+    }
+
+    footer{
+      margin-top: 16px;
+    }
+    .nav{
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .nav a{
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 900;
+      border:1px solid var(--line);
+      background: white;
+      color: #23305a;
+      box-shadow: var(--shadow);
+    }
+    .nav a.primary{
+      background: var(--btn);
+      color: var(--btnText);
+      border: 0;
+    }
+    .nav a.primary.disabled{
+      background: #9bb0ff;
+      border: 0;
+    }
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>無性生殖｜互動練習</h1>
+      <p class="sub">完成四題並全部答對，即可解鎖「下一頁」。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- teaching text kept; remove the words "教學文本" -->
+    <section class="card" aria-label="文本與圖片">
+      <p class="teaching">
+        <span class="kw kw1">親代</span> 產生 <span class="kw kw2">子代</span> 的過程不需經過
+        <span class="kw kw3">配子</span> 的 <span class="kw kw4">結合</span>，稱為
+        <span class="kw kw5">無性生殖</span>。<span class="kw kw5">無性生殖</span> 的方式可分為：
+        <span class="kw kw6">分裂生殖</span>、<span class="kw kw6">出芽生殖</span>、<span class="kw kw6">斷裂生殖</span>、
+        <span class="kw kw6">孢子繁殖</span>、<span class="kw kw6">營養器官繁殖</span> 和 <span class="kw kw6">組織培養</span> 等。
+      </p>
+      <div class="imgBox">
+        <img src="00.png" alt="無性生殖相關照片（00.png）" />
+      </div>
+    </section>
+
+    <!-- Q1 -->
+    <section class="card question" id="q1" data-q="1">
+      <div class="qHead">
+        <h2 class="qTitle">第 1 題｜無性生殖的定義</h2>
+        <span class="qType">單選題</span>
+      </div>
+      <div class="qBody" role="group" aria-label="第 1 題 單選題">
+        <p style="margin:0;color:var(--muted)">哪一個描述最符合「無性生殖」？</p>
+        <label class="option">
+          <input type="radio" name="q1" value="A" />
+          需要雌雄配子結合後才會形成子代
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="B" />
+          親代產生子代不需經過配子的結合
+        </label>
+        <label class="option">
+          <input type="radio" name="q1" value="C" />
+          必須經過受精卵發育成個體
+        </label>
+      </div>
+      <div class="actions">
+        <button class="btn check" data-check="q1" disabled>檢查答案</button>
+        <button class="btn secondary redo" data-redo="q1" style="display:none;">重做本題</button>
+      </div>
+      <div class="feedback" data-feedback="q1" aria-live="polite"></div>
+    </section>
+
+    <!-- Q2 -->
+    <section class="card question" id="q2" data-q="2">
+      <div class="qHead">
+        <h2 class="qTitle">第 2 題｜辨識無性生殖方式</h2>
+        <span class="qType">多選題</span>
+      </div>
+      <div class="qBody" role="group" aria-label="第 2 題 多選題">
+        <p style="margin:0;color:var(--muted)">請選出屬於「無性生殖方式」的選項（可複選）。</p>
+        <div class="grid2">
+          <label class="option"><input type="checkbox" name="q2" value="split" /> 分裂生殖</label>
+          <label class="option"><input type="checkbox" name="q2" value="bud" /> 出芽生殖</label>
+          <label class="option"><input type="checkbox" name="q2" value="frag" /> 斷裂生殖</label>
+          <label class="option"><input type="checkbox" name="q2" value="spore" /> 孢子繁殖</label>
+          <label class="option"><input type="checkbox" name="q2" value="veg" /> 營養器官繁殖</label>
+          <label class="option"><input type="checkbox" name="q2" value="tc" /> 組織培養</label>
+          <label class="option"><input type="checkbox" name="q2" value="fert" /> 受精</label>
+          <label class="option"><input type="checkbox" name="q2" value="meiosis" /> 減數分裂</label>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn check" data-check="q2" disabled>檢查答案</button>
+        <button class="btn secondary redo" data-redo="q2" style="display:none;">重做本題</button>
+      </div>
+      <div class="feedback" data-feedback="q2" aria-live="polite"></div>
+    </section>
+
+    <!-- Q3 -->
+    <section class="card question" id="q3" data-q="3">
+      <div class="qHead">
+        <h2 class="qTitle">第 3 題｜無性生殖種類 × 代表生物配對</h2>
+        <span class="qType">配對題組（下拉選單）</span>
+      </div>
+      <div class="qBody" role="group" aria-label="第 3 題 配對題組">
+        <p style="margin:0;color:var(--muted)">請將「無性生殖種類」配對到最常見的「代表生物／例子」。</p>
+
+        <div class="matchRow">
+          <div>（1）分裂生殖</div>
+          <select data-q3="t1">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星</option>
+            <option value="mold">黴菌／真菌</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
+            <option value="orchid">蝴蝶蘭（組織培養）</option>
+            <option value="frog">青蛙</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（2）出芽生殖</div>
+          <select data-q3="t2">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星</option>
+            <option value="mold">黴菌／真菌</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
+            <option value="orchid">蝴蝶蘭（組織培養）</option>
+            <option value="fish">鮭魚</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（3）斷裂生殖</div>
+          <select data-q3="t3">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星（或渦蟲）</option>
+            <option value="mold">黴菌／真菌</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
+            <option value="orchid">蝴蝶蘭（組織培養）</option>
+            <option value="bird">麻雀</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（4）孢子繁殖</div>
+          <select data-q3="t4">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星</option>
+            <option value="mold">黴菌／真菌（如麵包黴）</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
+            <option value="orchid">蝴蝶蘭（組織培養）</option>
+            <option value="cat">貓</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（5）營養器官繁殖</div>
+          <select data-q3="t5">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星</option>
+            <option value="mold">黴菌／真菌</option>
+            <option value="potato">馬鈴薯（塊莖／塊根等）</option>
+            <option value="orchid">蝴蝶蘭（組織培養）</option>
+            <option value="human">人類</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（6）組織培養</div>
+          <select data-q3="t6">
+            <option value="">請選擇代表生物</option>
+            <option value="amoeba">變形蟲（阿米巴）</option>
+            <option value="hydra">水螅</option>
+            <option value="starfish">海星</option>
+            <option value="mold">黴菌／真菌</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
+            <option value="orchid">蝴蝶蘭（大量繁殖）</option>
+            <option value="turtle">烏龜</option>
+          </select>
+        </div>
+
+        <p class="hint">每一列都要選完，才會啟用「檢查答案」。</p>
+      </div>
+      <div class="actions">
+        <button class="btn check" data-check="q3" disabled>檢查答案</button>
+        <button class="btn secondary redo" data-redo="q3" style="display:none;">重做本題</button>
+      </div>
+      <div class="feedback" data-feedback="q3" aria-live="polite"></div>
+    </section>
+
+    <!-- Q4 -->
+    <section class="card question" id="q4" data-q="4">
+      <div class="qHead">
+        <h2 class="qTitle">第 4 題｜配對題（例子 → 方式）</h2>
+        <span class="qType">下拉選單配對</span>
+      </div>
+      <div class="qBody" role="group" aria-label="第 4 題 配對題">
+        <p style="margin:0;color:var(--muted)">把例子配對到最符合的無性生殖方式。</p>
+
+        <div class="matchRow">
+          <div>（1）變形蟲一分為二，形成兩個個體</div>
+          <select data-match="m1">
+            <option value="">請選擇</option>
+            <option value="split">分裂生殖</option>
+            <option value="bud">出芽生殖</option>
+            <option value="spore">孢子繁殖</option>
+            <option value="veg">營養器官繁殖</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（2）水螅身上長出小芽，長大後分離成新個體</div>
+          <select data-match="m2">
+            <option value="">請選擇</option>
+            <option value="split">分裂生殖</option>
+            <option value="bud">出芽生殖</option>
+            <option value="spore">孢子繁殖</option>
+            <option value="veg">營養器官繁殖</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（3）真菌釋放孢子，孢子發育成新個體</div>
+          <select data-match="m3">
+            <option value="">請選擇</option>
+            <option value="split">分裂生殖</option>
+            <option value="bud">出芽生殖</option>
+            <option value="spore">孢子繁殖</option>
+            <option value="veg">營養器官繁殖</option>
+          </select>
+        </div>
+
+        <div class="matchRow">
+          <div>（4）馬鈴薯的塊莖長芽，形成新的植株</div>
+          <select data-match="m4">
+            <option value="">請選擇</option>
+            <option value="split">分裂生殖</option>
+            <option value="bud">出芽生殖</option>
+            <option value="spore">孢子繁殖</option>
+            <option value="veg">營養器官繁殖</option>
+          </select>
+        </div>
+
+        <p class="hint">注意：本題每一列都要選完，才會啟用「檢查答案」。</p>
+      </div>
+      <div class="actions">
+        <button class="btn check" data-check="q4" disabled>檢查答案</button>
+        <button class="btn secondary redo" data-redo="q4" style="display:none;">重做本題</button>
+      </div>
+      <div class="feedback" data-feedback="q4" aria-live="polite"></div>
+    </section>
+
+    <footer class="card">
+      <div class="nav">
+        <a class="secondary" href="./index.html" aria-label="上一頁">← 上一頁</a>
+        <a id="nextBtn" class="primary disabled" href="./2.html" aria-disabled="true" tabindex="-1" title="全部題目皆正確後解鎖">
+          下一頁 →
+        </a>
+      </div>
+      <p class="hint" id="unlockHint">解鎖條件：四題都答對，才可點擊「下一頁」。</p>
+    </footer>
+  </main>
+
+  <script>
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const state = { q1:false, q2:false, q3:false, q4:false };
+
+    function setCardState(qid, isCorrect, message){
+      const card = document.getElementById(qid);
+      const fb = document.querySelector(`[data-feedback="${qid}"]`);
+      card.classList.remove('correct','incorrect');
+      card.classList.add(isCorrect ? 'correct' : 'incorrect');
+      fb.classList.add('show');
+      fb.innerHTML = message;
+    }
+
+    function lockQuestion(qid){
+      const card = document.getElementById(qid);
+      $$('input, select, textarea', card).forEach(el => el.disabled = true);
+      const checkBtn = document.querySelector(`[data-check="${qid}"]`);
+      checkBtn.disabled = true;
+      checkBtn.setAttribute('aria-disabled','true');
+    }
+
+    function unlockQuestionForRedo(qid){
+      const card = document.getElementById(qid);
+      $$('input, select, textarea', card).forEach(el => el.disabled = false);
+
+      card.classList.remove('correct','incorrect');
+
+      const fb = document.querySelector(`[data-feedback="${qid}"]`);
+      fb.classList.remove('show');
+      fb.innerHTML = '';
+
+      const checkBtn = document.querySelector(`[data-check="${qid}"]`);
+      checkBtn.disabled = true;
+
+      const redoBtn = document.querySelector(`[data-redo="${qid}"]`);
+      redoBtn.style.display = 'none';
+
+      state[qid] = false;
+      updateNextButton();
+    }
+
+    function showRedo(qid){
+      const redoBtn = document.querySelector(`[data-redo="${qid}"]`);
+      redoBtn.style.display = 'inline-flex';
+    }
+
+    function updateNextButton(){
+      const allCorrect = Object.values(state).every(v => v === true);
+      const next = document.getElementById('nextBtn');
+      const hint = document.getElementById('unlockHint');
+
+      if(allCorrect){
+        next.classList.remove('disabled');
+        next.removeAttribute('aria-disabled');
+        next.removeAttribute('tabindex');
+        next.title = '前往下一頁';
+        hint.innerHTML = '✅ 已全部答對！可以前往下一頁。';
+      }else{
+        next.classList.add('disabled');
+        next.setAttribute('aria-disabled','true');
+        next.setAttribute('tabindex','-1');
+        next.title = '全部題目皆正確後解鎖';
+        hint.innerHTML = '解鎖條件：四題都答對，才可點擊「下一頁」。';
+      }
+    }
+
+    // --- enable/disable check buttons when answered
+
+    // Q1: radio
+    $$('input[name="q1"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const any = $$('input[name="q1"]:checked').length > 0;
+        $(`[data-check="q1"]`).disabled = !any;
+      });
+    });
+
+    // Q2: checkbox
+    $$('input[name="q2"]').forEach(c => {
+      c.addEventListener('change', () => {
+        const any = $$('input[name="q2"]:checked').length > 0;
+        $(`[data-check="q2"]`).disabled = !any;
+      });
+    });
+
+    // Q3: all selects chosen
+    const q3Selects = $$('select[data-q3]', $('#q3'));
+    function q3Watch(){
+      const ok = q3Selects.every(s => (s.value || '').trim() !== '');
+      $(`[data-check="q3"]`).disabled = !ok;
+    }
+    q3Selects.forEach(s => s.addEventListener('change', q3Watch));
+
+    // Q4: all selects chosen
+    const q4Selects = $$('[data-match]', $('#q4'));
+    function q4Watch(){
+      const ok = q4Selects.every(s => (s.value || '').trim() !== '');
+      $(`[data-check="q4"]`).disabled = !ok;
+    }
+    q4Selects.forEach(s => s.addEventListener('change', q4Watch));
+
+    // --- check logic
+
+    // Q1 correct = B
+    $(`[data-check="q1"]`).addEventListener('click', () => {
+      const picked = $('input[name="q1"]:checked')?.value || '';
+      const isCorrect = picked === 'B';
+      state.q1 = isCorrect;
+
+      if(isCorrect){
+        setCardState('q1', true, '✅ 正確！無性生殖的重點是：<b>不需經過配子的結合</b>也能產生子代。');
+        lockQuestion('q1');
+      }else{
+        setCardState('q1', false, '❌ 再想想：無性生殖不需要配子結合。');
+        $(`[data-check="q1"]`).disabled = true;
+        showRedo('q1');
+      }
+      updateNextButton();
+    });
+
+    // Q2 correct set
+    const q2CorrectSet = new Set(['split','bud','frag','spore','veg','tc']);
+    $(`[data-check="q2"]`).addEventListener('click', () => {
+      const picked = new Set($$('input[name="q2"]:checked').map(x => x.value));
+      let isCorrect = picked.size === q2CorrectSet.size;
+      if(isCorrect){
+        for(const v of q2CorrectSet) if(!picked.has(v)) { isCorrect = false; break; }
+      }
+      state.q2 = isCorrect;
+
+      if(isCorrect){
+        setCardState('q2', true, '✅ 正確！你選出常見的無性生殖方式。');
+        lockQuestion('q2');
+      }else{
+        setCardState('q2', false, '❌ 再檢查一次：<b>受精</b>與<b>減數分裂</b>不屬於無性生殖方式。');
+        $(`[data-check="q2"]`).disabled = true;
+        showRedo('q2');
+      }
+      updateNextButton();
+    });
+
+    // Q3 correct mapping (type -> organism/example)
+    const q3Key = { t1:'amoeba', t2:'hydra', t3:'starfish', t4:'mold', t5:'potato', t6:'orchid' };
+    $(`[data-check="q3"]`).addEventListener('click', () => {
+      let wrong = [];
+      for(const [k,ans] of Object.entries(q3Key)){
+        const v = ($(`select[data-q3="${k}"]`)?.value || '').trim();
+        if(v !== ans) wrong.push(k);
+      }
+      const isCorrect = wrong.length === 0;
+      state.q3 = isCorrect;
+
+      if(isCorrect){
+        setCardState('q3', true, '✅ 正確！你能把無性生殖種類與代表生物正確配對。');
+        lockQuestion('q3');
+      }else{
+        const mapName = {t1:'（1）', t2:'（2）', t3:'（3）', t4:'（4）', t5:'（5）', t6:'（6）'};
+        setCardState('q3', false,
+          `❌ 仍有配對需要調整：<b>${wrong.map(x=>mapName[x]).join('、')}</b>。<br>` +
+          `提示：變形蟲→分裂；水螅→出芽；海星/渦蟲→斷裂；黴菌→孢子；馬鈴薯→營養器官；蝴蝶蘭→組織培養。`
+        );
+        $(`[data-check="q3"]`).disabled = true;
+        showRedo('q3');
+      }
+      updateNextButton();
+    });
+
+    // Q4: example -> method
+    const q4Key = { m1:'split', m2:'bud', m3:'spore', m4:'veg' };
+    $(`[data-check="q4"]`).addEventListener('click', () => {
+      let wrong = [];
+      for(const [k,ans] of Object.entries(q4Key)){
+        const v = ($(`[data-match="${k}"]`)?.value || '').trim();
+        if(v !== ans) wrong.push(k);
+      }
+      const isCorrect = wrong.length === 0;
+      state.q4 = isCorrect;
+
+      if(isCorrect){
+        setCardState('q4', true, '✅ 正確！你能把例子與無性生殖方式正確配對。');
+        lockQuestion('q4');
+      }else{
+        const mapName = {m1:'（1）', m2:'（2）', m3:'（3）', m4:'（4）'};
+        setCardState('q4', false, `❌ 仍有配對需要調整：<b>${wrong.map(x=>mapName[x]).join('、')}</b>。<br>提示：一分為二→分裂；長出小芽→出芽；釋放孢子→孢子繁殖；塊莖長芽→營養器官繁殖。`);
+        $(`[data-check="q4"]`).disabled = true;
+        showRedo('q4');
+      }
+      updateNextButton();
+    });
+
+    // --- redo handlers
+    $$('[data-redo]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qid = btn.getAttribute('data-redo');
+        const card = document.getElementById(qid);
+
+        $$('input, select, textarea', card).forEach(el => el.disabled = false);
+
+        if(qid === 'q1'){
+          $$('input[name="q1"]', card).forEach(r => r.checked = false);
+        }
+        if(qid === 'q2'){
+          $$('input[name="q2"]', card).forEach(c => c.checked = false);
+        }
+        if(qid === 'q3'){
+          $$('select[data-q3]', card).forEach(s => s.value = '');
+        }
+        if(qid === 'q4'){
+          $$('select[data-match]', card).forEach(s => s.value = '');
+        }
+
+        unlockQuestionForRedo(qid);
+
+        // kick watchers
+        if(qid === 'q1'){ $(`[data-check="q1"]`).disabled = true; }
+        if(qid === 'q2'){ $(`[data-check="q2"]`).disabled = true; }
+        if(qid === 'q3'){ q3Watch(); }
+        if(qid === 'q4'){ q4Watch(); }
+
+        const focusTarget = $('input, select, textarea', card);
+        focusTarget?.focus?.();
+      });
+    });
+
+    // Prevent click on next when disabled
+    $('#nextBtn').addEventListener('click', (e) => {
+      if($('#nextBtn').classList.contains('disabled')){
+        e.preventDefault();
+      }
+    });
+
+    // init
+    updateNextButton();
+  </script>
+</body>
+</html>
