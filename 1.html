@@ -409,7 +409,7 @@
             <option value="hydra">水螅</option>
             <option value="starfish">海星</option>
             <option value="mold">黴菌／真菌</option>
-            <option value="potato">馬鈴薯（塊莖／塊根等）</option>
+            <option value="potato">馬鈴薯（塊莖）</option>
             <option value="orchid">蝴蝶蘭（組織培養）</option>
             <option value="human">人類</option>
           </select>
@@ -516,6 +516,42 @@
     const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
     const state = { q1:false, q2:false, q3:false, q4:false };
+
+    // --- shuffle options for Q2/Q3/Q4 (randomize order each load)
+    function shuffle(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    function shuffleChildren(container, selector){
+      if(!container) return;
+      const nodes = Array.from(container.querySelectorAll(selector));
+      shuffle(nodes).forEach(n => container.appendChild(n));
+    }
+    function shuffleSelectOptions(selectEl){
+      if(!selectEl) return;
+      const opts = Array.from(selectEl.querySelectorAll('option'));
+      if(opts.length <= 2) return;
+
+      const first = opts[0];
+      const rest = opts.slice(1);
+      shuffle(rest);
+
+      // re-append keeping the placeholder on top
+      selectEl.innerHTML = '';
+      selectEl.appendChild(first);
+      rest.forEach(o => selectEl.appendChild(o));
+    }
+
+    // Q2: shuffle checkbox options
+    shuffleChildren(document.querySelector('#q2 .grid2'), 'label.option');
+    // Q3: shuffle options in each select (keep placeholder first)
+    document.querySelectorAll('#q3 select[data-q3]').forEach(shuffleSelectOptions);
+    // Q4: shuffle options in each select (keep placeholder first)
+    document.querySelectorAll('#q4 select[data-match]').forEach(shuffleSelectOptions);
+
 
     function setCardState(qid, isCorrect, message){
       const card = document.getElementById(qid);
