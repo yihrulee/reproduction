@@ -154,7 +154,6 @@
 
 <div class="status-bar">
     <span>得分：<span id="score">0</span></span>
-    <span>生命：<span id="lives">5</span></span>
 </div>
 
 <div class="mission-box">
@@ -181,7 +180,7 @@
 </div>
 
 <script>
-    // 根據教材內容設計的題庫數據 [cite: 2, 11, 29, 32]
+    // 題庫
     const missions = [
         { text: "尋找【體外受精】的動物或特徵", targetType: "external" },
         { text: "尋找【體內受精】的動物或特徵", targetType: "internal" },
@@ -190,31 +189,57 @@
     ];
 
     const moleData = [
-        { name: "珊瑚", types: ["external", "egg"], note: "釋放大量精卵到水中 [cite: 4]" },
-        { name: "小丑魚", types: ["external", "egg"], note: "在水中受精發育 [cite: 7, 23]" },
-        { name: "非洲水牛", types: ["internal", "baby"], note: "體內受精，產出胎兒 [cite: 19, 38]" },
-        { name: "紅鶴", types: ["internal", "egg"], note: "交配受精，體外孵化 [cite: 16, 33]" },
-        { name: "兩生類", types: ["external", "egg"], note: "通常在水中排卵 [cite: 2, 29]" },
-        { name: "昆蟲", types: ["internal", "egg"], note: "行交配行為 [cite: 11]" },
-        { name: "哺乳類", types: ["internal", "baby"], note: "母體內發育 " },
-        { name: "交配行為", types: ["internal"], note: "體內受精必備 [cite: 11]" },
-        { name: "大量精卵", types: ["external"], note: "增加成功機會 [cite: 4]" }
+        { name: "珊瑚", types: ["external", "egg"], note: "釋放大量精卵到水中" },
+        { name: "小丑魚", types: ["external", "egg"], note: "在水中受精發育" },
+        { name: "非洲水牛", types: ["internal", "baby"], note: "體內受精，產出胎兒" },
+        { name: "紅鶴", types: ["internal", "egg"], note: "交配受精，體外孵化" },
+        { name: "兩生類", types: ["external", "egg"], note: "通常在水中排卵" },
+        { name: "昆蟲", types: ["internal", "egg"], note: "行交配行為" },
+        { name: "哺乳類", types: ["internal", "baby"], note: "母體內發育" },
+        { name: "交配行為", types: ["internal"], note: "體內受精必備" },
+        { name: "大量精卵", types: ["external"], note: "增加成功機會" }
     ];
 
+    // === 遊戲參數：可自行調整 ===
+    const MAX_ACTIVE = 3;              // 同時最多出現幾個選項（數個）
+    const SPAWN_MIN = 250;             // 生成間隔下限(ms) -> 越小越常冒
+    const SPAWN_MAX = 800;             // 生成間隔上限(ms)
+    const UP_TIME_MIN = 700;           // 露出時間下限(ms)
+    const UP_TIME_MAX = 1300;          // 露出時間上限(ms)
+    const SCORE_CORRECT = 10;          // 打對加分
+    const SCORE_WRONG = 5;             // 打錯扣分（扣幾分）
+    const PASS_SCORE = 100;            // 通關分數
+
     let score = 0;
-    let lives = 5;
     let activeMission = null;
     let gameActive = false;
-    let moleTimer = null;
+
+    // 用來管理同時出現的地鼠
+    const activeHoles = new Set();     // 記錄目前「正在 up」的洞 index
+    let spawnTimer = null;
+
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     function startGame() {
-        if(gameActive) return;
+        if (gameActive) return;
+
         score = 0;
-        lives = 5;
         gameActive = true;
+        activeHoles.clear();
+
+        // 清空畫面上殘留的地鼠狀態
+        for (let i = 0; i < 9; i++) {
+            const el = document.getElementById(`m${i}`);
+            el.classList.remove('up', 'correct-hit', 'wrong-hit');
+            el.innerText = "";
+            el.onclick = null;
+        }
+
         updateUI();
         nextMission();
-        popMoles();
+        spawnLoop();
     }
 
     function nextMission() {
@@ -222,45 +247,87 @@
         document.getElementById('mission-text').innerText = activeMission.text;
     }
 
-    function popMoles() {
-        if(!gameActive) return;
-        
-        const moleIndex = Math.floor(Math.random() * 9);
-        const moleEl = document.getElementById(`m${moleIndex}`);
+    // 不定時、持續產生地鼠（可同時多個）
+    function spawnLoop() {
+        if (!gameActive) return;
+
+        // 若目前同時出現的數量未達上限，嘗試生成一個
+        if (activeHoles.size < MAX_ACTIVE) spawnOneMole();
+
+        // 下一次生成時間：不定時（隨機）
+        const nextIn = randInt(SPAWN_MIN, SPAWN_MAX);
+        spawnTimer = setTimeout(spawnLoop, nextIn);
+    }
+
+    function spawnOneMole() {
+        // 找空洞
+        const free = [];
+        for (let i = 0; i < 9; i++) {
+            if (!activeHoles.has(i)) free.push(i);
+        }
+        if (free.length === 0) return;
+
+        const holeIndex = free[Math.floor(Math.random() * free.length)];
+        const moleEl = document.getElementById(`m${holeIndex}`);
         const randomMole = moleData[Math.floor(Math.random() * moleData.length)];
-        
+
+        activeHoles.add(holeIndex);
+
         moleEl.innerText = randomMole.name;
         moleEl.dataset.types = JSON.stringify(randomMole.types);
         moleEl.dataset.note = randomMole.note;
+
         moleEl.classList.add('up');
         moleEl.classList.remove('correct-hit', 'wrong-hit');
 
-        moleEl.onclick = () => hit(moleEl);
+        moleEl.onclick = () => hit(moleEl, holeIndex);
 
-        setTimeout(() => {
-            moleEl.classList.remove('up');
-            if(gameActive) moleTimer = setTimeout(popMoles, Math.max(500, 1500 - (score * 5)));
-        }, 1200);
+        const upTime = randInt(UP_TIME_MIN, UP_TIME_MAX);
+        setTimeout(() => hideMole(moleEl, holeIndex), upTime);
     }
 
-    function hit(el) {
-        if(!el.classList.contains('up') || el.classList.contains('correct-hit')) return;
-        
-        const types = JSON.parse(el.dataset.types);
-        if(types.includes(activeMission.targetType)) {
-            score += 10;
+    function hideMole(el, holeIndex) {
+        // 若已經收回就不用重複做
+        if (!activeHoles.has(holeIndex)) return;
+
+        el.classList.remove('up');
+        el.onclick = null;
+
+        // 延遲清文字，避免動畫閃爍
+        setTimeout(() => {
+            if (!el.classList.contains('up')) el.innerText = "";
+        }, 150);
+
+        activeHoles.delete(holeIndex);
+    }
+
+    // 打到正確才加分；打錯扣分
+    function hit(el, holeIndex) {
+        if (!gameActive) return;
+        if (!el.classList.contains('up')) return;
+
+        const types = JSON.parse(el.dataset.types || "[]");
+        const isCorrect = types.includes(activeMission.targetType);
+
+        if (isCorrect) {
+            score += SCORE_CORRECT;
             el.classList.add('correct-hit');
-            showPop(el, "正確! " + el.dataset.note, "#16a34a");
-            if(score % 30 === 0) nextMission();
+            showPop(el, "正確! " + (el.dataset.note || ""), "#16a34a");
+
+            // 每 30 分換題（保留原本規則）
+            if (score % 30 === 0) nextMission();
         } else {
-            lives--;
+            score = Math.max(0, score - SCORE_WRONG);
             el.classList.add('wrong-hit');
-            showPop(el, "打錯了!", "#dc2626");
+            showPop(el, `打錯了! -${SCORE_WRONG}`, "#dc2626");
         }
-        
+
         updateUI();
-        if(lives <= 0) endGame();
-        if(score >= 100) winGame();
+
+        // 被打到後讓它快速收回（避免同一隻被連點）
+        setTimeout(() => hideMole(el, holeIndex), 200);
+
+        if (score >= PASS_SCORE) winGame();
     }
 
     function showPop(el, txt, color) {
@@ -274,22 +341,25 @@
 
     function updateUI() {
         document.getElementById('score').innerText = score;
-        document.getElementById('lives').innerText = lives;
-    }
-
-    function endGame() {
-        gameActive = false;
-        clearTimeout(moleTimer);
-        alert(`遊戲結束！您的最終得分是：${score}`);
     }
 
     function winGame() {
         gameActive = false;
-        clearTimeout(moleTimer);
+        clearTimeout(spawnTimer);
+
+        // 收回全部
+        for (let i = 0; i < 9; i++) {
+            const el = document.getElementById(`m${i}`);
+            el.classList.remove('up');
+            el.onclick = null;
+        }
+        activeHoles.clear();
+
         document.getElementById('next-page').classList.remove('disabled');
         alert("恭喜通關！您已掌握動物生殖與發育的知識。");
     }
 </script>
+
 
 </body>
 </html>
