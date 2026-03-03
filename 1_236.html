@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>生命之藍圖：探索染色體</title>
+  <style>
+    :root {
+      --bg: #f5f8ff;
+      --panel: rgba(255,255,255,.92);
+      --text: #19324d;
+      --sub: #4c627a;
+      --brand: #5b7cff;
+      --brand-2: #8b5cf6;
+      --accent: #14b8a6;
+      --gold: #f59e0b;
+      --danger: #ef4444;
+      --ok: #16a34a;
+      --shadow: 0 16px 40px rgba(29, 53, 87, .12);
+      --radius: 22px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(91,124,255,.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 28%),
+        linear-gradient(180deg, #f7faff 0%, #eef4ff 100%);
+      line-height: 1.65;
+    }
+
+    /* 教學內容中的多彩關鍵字樣式 */
+    .kw-chromosome { color: var(--brand); font-weight: 800; }
+    .kw-material { color: #8b5cf6; font-weight: 800; }
+    .kw-dna { color: #14b8a6; font-weight: 800; }
+    .kw-protein { color: #f59e0b; font-weight: 800; }
+    .kw-homologous { color: #ef4444; font-weight: 800; }
+    .kw-division { color: #16a34a; font-weight: 800; }
+    .kw-nucleus { color: #0ea5e9; font-weight: 800; }
+
+    img { max-width: 100%; object-fit: contain; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 18px 20px; }
+
+    .hero {
+      padding: 60px 0 20px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-title-container {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(91,124,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy { padding: 35px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    .hero-copy h3 { color: var(--brand); font-size: 1.6rem; margin-bottom: 15px; border-left: 5px solid var(--brand); padding-left: 15px; }
+
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.2; }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.8rem); }
+    h2 { font-size: clamp(1.45rem, 3vw, 2.2rem); }
+    
+    .hero p, .section-intro, .muted { color: var(--sub); }
+
+    .hero-visual { padding: 22px; display: grid; place-items: center; }
+    .section { margin-top: 26px; padding: 28px; }
+    .section-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 14px; margin-bottom: 18px; }
+    
+    .tag {
+      display: inline-block;
+      font-size: .82rem;
+      color: var(--brand);
+      background: rgba(91,124,255,.1);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+    .mini-card { border: 1px solid rgba(91,124,255,.12); background: rgba(255,255,255,.86); border-radius: 18px; padding: 18px; height: 100%; }
+
+    .question {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.86);
+      border: 2px solid rgba(91,124,255,.12);
+      transition: all 0.3s ease;
+      margin-bottom: 18px;
+    }
+
+    .question h4 { margin: 0 0 12px; font-size: 1.05rem; }
+    .question.correct { border-color: var(--ok); background: rgba(22,163,74,.05); }
+    .question.incorrect { border-color: var(--danger); background: rgba(239,68,68,.05); }
+
+    .option-list { display: grid; gap: 10px; margin-top: 10px; }
+    .option {
+      border: 1px solid rgba(91,124,255,.15);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: white;
+      display: flex;
+      align-items: start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+    .btn { border: 0; cursor: pointer; padding: 13px 18px; border-radius: 999px; font-weight: 800; font-size: .98rem; transition: .2s ease; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { color: white; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 14px 26px rgba(91,124,255,.24); }
+    .btn-secondary { background: white; color: var(--brand); border: 1px solid rgba(91,124,255,.2); }
+
+    .feedback { margin-top: 12px; padding: 12px 14px; border-radius: 14px; display: none; font-weight: 700; }
+    .feedback.show { display: block; }
+    .feedback.good { background: rgba(22,163,74,.11); color: #0f6a33; }
+    .feedback.bad { background: rgba(239,68,68,.09); color: #991b1b; }
+
+    .toggle-wrap { display: grid; grid-template-columns: 180px 1fr; gap: 18px; align-items: center; }
+    .toggle-buttons { display: grid; gap: 10px; }
+    .toggle-btn { border: 1px solid rgba(91,124,255,.16); background: white; border-radius: 16px; padding: 13px 14px; font-weight: 800; cursor: pointer; }
+    .toggle-btn.active { color: white; background: linear-gradient(135deg, var(--brand), var(--brand-2)); border-color: transparent; }
+
+    .compare-stage {
+      min-height: 280px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(239,244,255,.9));
+      border: 1px solid rgba(91,124,255,.12);
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .compare-stage .label {
+      position: absolute; top: 16px; right: 18px; background: rgba(91,124,255,.1); color: var(--brand); border-radius: 999px; padding: 7px 12px; font-weight: 700; font-size: .9rem;
+    }
+
+    .thread-view, .chromosome-view { height: 100%; display: none; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; padding-top: 20px; }
+    .thread-view.active, .chromosome-view.active { display: flex; }
+
+    .info-box { margin-top: 16px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,.86); border: 1px solid rgba(91,124,255,.12); min-height: 94px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .chip { border: 0; cursor: pointer; padding: 10px 14px; border-radius: 999px; background: rgba(91,124,255,.1); color: var(--brand); font-weight: 800; transition: .15s ease; }
+    .chip.active, .chip:hover { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: white; }
+
+    .img-highlight-wrapper { position: relative; display: inline-block; width: 100%; max-width: 400px; text-align: center; }
+    /* 讓圖片寬度固定跟容器一致，避免 overlay 百分比對不到實際圖片 */
+    .img-highlight-wrapper img { width: 100%; height: auto; display: block; }
+    .hl-box { position: absolute; border: 4px solid var(--gold); background: rgba(245, 158, 11, 0.25); border-radius: 8px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .hl-box.active { opacity: 1; animation: pulse 1.5s infinite; }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+
+    .pair-board { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-top: 14px; }
+    .pair-card { background: white; border: 2px solid rgba(91,124,255,.14); border-radius: 18px; padding: 12px; text-align: center; cursor: pointer; transition: .16s ease; min-height: 200px; position: relative; }
+    .pair-card.selected { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(91,124,255,.12); }
+    .pair-card.matched { border-color: rgba(22,163,74,.4); background: rgba(22,163,74,.08); pointer-events: none; }
+    .pair-card.bad { border-color: rgba(239,68,68,.38); background: rgba(239,68,68,.06); }
+
+    .flip-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+    .flip-card { perspective: 1200px; min-height: 220px; }
+    .flip-inner { position: relative; width: 100%; min-height: 220px; transition: transform .6s; transform-style: preserve-3d; cursor: pointer; }
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; justify-content: center; border: 1px solid rgba(91,124,255,.14); background: white; box-shadow: var(--shadow); }
+    .flip-face.back { transform: rotateY(180deg); background: linear-gradient(160deg, rgba(91,124,255,.97), rgba(20,184,166,.92)); color: white; }
+
+    .matching-wrap { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin-top: 18px; }
+    .match-col { padding: 16px; border-radius: 18px; background: rgba(255,255,255,.86); border: 1px solid rgba(91,124,255,.12); }
+    .match-item { width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(91,124,255,.14); background: white; cursor: pointer; margin-top: 10px; transition: .15s ease; font: inherit; }
+    .match-item.selected { border-color: var(--brand); background: rgba(91,124,255,.08); }
+    .match-item.done { border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.08); color: #0f6a33; pointer-events: none; }
+
+    select { width: 100%; margin-top: 10px; border-radius: 14px; border: 1px solid rgba(91,124,255,.18); padding: 12px 14px; font: inherit; background: white; }
+
+    .footer-nav { margin-top: 40px; padding: 20px 0; border-top: 1px solid rgba(91,124,255,.15); background: rgba(255,255,255,.5); }
+    .footer-inner { max-width: var(--max); margin: 0 auto; padding: 0 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .btn-disabled { opacity: 0.4; pointer-events: none; cursor: not-allowed; }
+
+    @media (max-width: 960px) {
+      .hero, .grid-2, .toggle-wrap, .matching-wrap { grid-template-columns: 1fr; }
+      .flip-grid { grid-template-columns: 1fr; }
+      .pair-board { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-title-container">
+        <h1>生命之藍圖：探索染色體</h1>
+      </div>
+      
+      <div class="card hero-copy">
+        <h3>染色體</h3>
+        <p>
+          當<span class="kw-division">細胞分裂</span>時，原本不容易看清楚的<span class="kw-material">遺傳物質</span>，會濃縮成一條一條棒狀的構造，這就是<span class="kw-chromosome">染色體</span>。
+          這個網頁把課本重點做成互動活動、圖像練習與多元評量，讓你一邊學、一邊玩，並檢查自己學會了多少。
+        </p>
+      </div>
+
+      <div class="card hero-visual">
+        <div class="hero-figure">
+          <img src="0_8.png" alt="細胞核內的遺傳物質濃縮成染色體">
+        </div>
+      </div>
+    </section>
+
+    <section class="section card" id="intro">
+      <div class="section-head">
+        <div>
+          <div class="tag">情境導入</div>
+          <h2>植物長高、根變長，和什麼有關？</h2>
+        </div>
+        <div class="muted">先想想看，再看回饋</div>
+      </div>
+      <p class="section-intro">生物的生長與繁殖，都和細胞長大、成熟與<span class="kw-division">分裂</span>有關。先用一題暖身連到今天的主題吧！</p>
+      
+      <div class="question" id="q-warmup" data-type="radio" data-ans="C">
+        <h4>暖身題：豆子發芽、洋蔥根持續生長，最合理的解釋是：</h4>
+        <div class="option-list">
+          <label class="option"><input type="radio" name="warmup" value="A"> A. 細胞只會變大，不會增加數量</label>
+          <label class="option"><input type="radio" name="warmup" value="B"> B. 細胞只會變多，不會改變大小</label>
+          <label class="option"><input type="radio" name="warmup" value="C"> C. 細胞會變大，也會經過分裂讓數量增加</label>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary check-btn" disabled>檢查答案</button>
+          <button class="btn btn-secondary retry-btn" style="display: none;">重做本題</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </section>
+
+    <section class="section card" id="concept">
+      <div class="section-head">
+        <div>
+          <div class="tag">核心知識 1</div>
+          <h2>什麼是染色體？</h2>
+        </div>
+        <div class="muted">切換兩種狀態比較看看</div>
+      </div>
+      <p class="section-intro">
+        <span class="kw-nucleus">細胞核</span>內含有<span class="kw-material">遺傳物質</span>。平時呈細絲狀，不容易觀察；當細胞進行<span class="kw-division">分裂</span>時，會濃縮成一條一條棒狀構造，稱為<span class="kw-chromosome">染色體</span>。
+      </p>
+      <div class="toggle-wrap">
+        <div class="toggle-buttons">
+          <button class="toggle-btn active" data-view="thread">平時狀態</button>
+          <button class="toggle-btn" data-view="chromosome">分裂時狀態</button>
+        </div>
+        <div>
+          <div class="compare-stage">
+            <div class="label" id="stageLabel">平時：細絲狀</div>
+            <div class="thread-view active" id="threadView">
+              <img src="0_1.png" alt="平時：細絲狀" style="max-height: 160px;">
+              <div style="max-width:380px;">
+                <h3>平時不容易看清楚</h3>
+                <p class="muted"><span class="kw-material">遺傳物質</span>平時像細絲一樣分散在<span class="kw-nucleus">細胞核</span>內，在顯微鏡下不容易看得很清楚。</p>
+              </div>
+            </div>
+            <div class="chromosome-view" id="chromosomeView">
+              <img src="0_2.png" alt="分裂時：棒狀染色體" style="max-height: 160px;">
+              <div style="max-width:380px;">
+                <h3>分裂時會濃縮成<span class="kw-chromosome">染色體</span></h3>
+                <p class="muted">當細胞進行<span class="kw-division">分裂</span>時，<span class="kw-material">遺傳物質</span>濃縮，顯現出棒狀構造，這就是<span class="kw-chromosome">染色體</span>。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card" id="composition">
+      <div class="section-head">
+        <div>
+          <div class="tag">核心知識 2</div>
+          <h2>染色體由什麼組成？</h2>
+        </div>
+        <div class="muted">點擊關鍵字查看說明</div>
+      </div>
+      <p class="section-intro">
+        <span class="kw-chromosome">染色體</span>主要由<span class="kw-dna">DNA</span>和<span class="kw-protein">蛋白質</span>組成，其中 <span class="kw-dna">DNA</span> 是控制遺傳的物質。
+      </p>
+      <div class="grid-2">
+        <div class="mini-card">
+          <h3>組成探索</h3>
+          <div class="chips">
+            <button class="chip active" data-topic="dna">DNA</button>
+            <button class="chip" data-topic="protein">蛋白質</button>
+            <button class="chip" data-topic="chromosome">染色體</button>
+          </div>
+          <div class="info-box" id="topicInfo">
+            <strong>DNA：</strong> 是控制遺傳的物質，可以把它想成攜帶遺傳資訊的重要材料。
+          </div>
+        </div>
+        <div class="mini-card" style="text-align: center;">
+          <h3>概念圖</h3>
+          <div class="img-highlight-wrapper">
+            <img src="0_3.png" alt="染色體組成">
+            <div id="hl-dna" class="hl-box active" style="top: 66%; left: 14%; width: 78%; height: 30%;"></div>
+            <div id="hl-protein" class="hl-box" style="top: 28%; left: 62%; width: 32%; height: 30%;"></div>
+            <div id="hl-chromosome" class="hl-box" style="top: 6%; left: 46%; width: 22%; height: 30%;"></div>
+          </div>
+          <div class="status">🧠 點擊左側標籤，圖片對應位置會發亮</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card" id="homologous">
+      <div class="section-head">
+        <div>
+          <div class="tag">核心知識 3</div>
+          <h2>什麼是同源染色體？</h2>
+        </div>
+        <div class="muted">請找出兩對同源染色體</div>
+      </div>
+      <p class="section-intro">
+        體細胞中的<span class="kw-chromosome">染色體</span>通常兩兩成對，大小、形狀相似，一條來自父方、一條來自母方，這樣的一對稱為<span class="kw-homologous">同源染色體</span>。
+      </p>
+      
+      <div class="question" id="q-pair">
+        <h4>配對遊戲：以下四條染色體皆是同一細胞核中的染色體，將大小、形狀相似者配成同源染色體。</h4>
+        <div class="pair-board" id="pairBoard">
+          <button class="pair-card" data-group="1">
+            <div class="pair-figure"><img src="0_5.png" alt="甲" style="max-height: 100px;"></div>
+            <div class="pair-label">甲</div>
+          </button>
+          <button class="pair-card" data-group="2">
+            <div class="pair-figure"><img src="0_6.png" alt="乙" style="max-height: 100px;"></div>
+            <div class="pair-label">乙</div>
+          </button>
+          <button class="pair-card" data-group="1">
+            <div class="pair-figure"><img src="0_4.png" alt="丙" style="max-height: 100px;"></div>
+            <div class="pair-label">丙</div>
+          </button>
+          <button class="pair-card" data-group="2">
+            <div class="pair-figure"><img src="0_7.png" alt="丁" style="max-height: 100px;"></div>
+            <div class="pair-label">丁</div>
+          </button>
+        </div>
+        <div class="feedback" id="pairFeedback"></div>
+      </div>
+    </section>
+
+    <section class="section card" id="counts">
+      <div class="section-head">
+        <div>
+          <div class="tag">知識快遞</div>
+          <h2>不同生物的染色體數目</h2>
+        </div>
+        <div class="muted">點擊卡片翻面</div>
+      </div>
+      <p class="section-intro">不同種類的生物，染色體數目會不同；同一種生物則具有固定的染色體數目。</p>
+      <div class="flip-grid">
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face front"><h3>豌豆</h3><p class="muted">按一下看數目</p></div>
+            <div class="flip-face back"><div>染色體數目</div><div style="font-size: 3rem; font-weight: 900;">14</div><div>共 7 對</div></div>
+          </div>
+        </div>
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face front"><h3>人類</h3><p class="muted">按一下看數目</p></div>
+            <div class="flip-face back"><div>染色體數目</div><div style="font-size: 3rem; font-weight: 900;">46</div><div>共 23 對</div></div>
+          </div>
+        </div>
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face front"><h3>黑猩猩</h3><p class="muted">按一下看數目</p></div>
+            <div class="flip-face back"><div>染色體數目</div><div style="font-size: 3rem; font-weight: 900;">48</div><div>共 24 對</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card" id="assessment">
+      <div class="section-head">
+        <div>
+          <div class="tag">多元評量</div>
+          <h2>挑戰你的學習成果</h2>
+        </div>
+      </div>
+
+      <div class="question" data-type="radio" data-ans="1" id="q1">
+        <h4>1. 當細胞進行分裂時，遺傳物質會變成什麼樣子？</h4>
+        <div class="option-list">
+          <label class="option"><input type="radio" name="q1" value="0"> 完全消失</label>
+          <label class="option"><input type="radio" name="q1" value="1"> 濃縮成一條一條棒狀的構造</label>
+          <label class="option"><input type="radio" name="q1" value="2"> 跑到細胞膜外面</label>
+        </div>
+        <div class="actions"><button class="btn btn-primary check-btn" disabled>檢查答案</button></div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" id="q-match">
+        <h4>4. 配對題：點選左邊名詞，再點右邊對應的解釋</h4>
+        <div class="matching-wrap">
+          <div class="match-col">
+            <button class="match-item" data-side="left" data-key="chromosome">染色體</button>
+            <button class="match-item" data-side="left" data-key="dna">DNA</button>
+            <button class="match-item" data-side="left" data-key="homologous">同源染色體</button>
+          </div>
+          <div class="match-col">
+            <button class="match-item" data-side="right" data-key="homologous">大小、形狀相似，通常成對存在</button>
+            <button class="match-item" data-side="right" data-key="chromosome">細胞分裂時顯現的棒狀構造</button>
+            <button class="match-item" data-side="right" data-key="dna">控制遺傳的物質</button>
+          </div>
+        </div>
+        <div class="feedback" id="matchFeedback"></div>
+      </div>
+
+      <div class="question" id="q-order">
+        <h4>6. 排序題：請將名詞依「由小到大（由內到外）」排序</h4>
+        <p>請將 染色體、DNA、細胞核 排成正確順序。</p>
+        <div style="display: grid; gap: 10px;" id="orderSelectGroup">
+          <select id="order1"><option value="">第 1 個（最小）</option></select>
+          <select id="order2"><option value="">第 2 個</option></select>
+          <select id="order3"><option value="">第 3 個（最大）</option></select>
+        </div>
+        <div class="actions"><button class="btn btn-primary check-btn" disabled id="checkOrderBtn">檢查答案</button></div>
+        <div class="feedback" id="orderFeedback"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-nav">
+    <div class="footer-inner">
+      <a href="index.html" class="btn btn-secondary">← 上一頁</a>
+      <div style="text-align: right;">
+        <span class="unlock-hint" id="unlockHint">完成所有題目即可前往下一頁</span>
+        <a href="./02_394.html" class="btn btn-primary btn-disabled" id="nextPageBtn">下一頁 →</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const taskStatus = { warmup: false, pairGame: false, q1: false, match: false, order6: false };
+
+    function checkAllCompleted() {
+      const allDone = Object.values(taskStatus).every(v => v);
+      const btn = document.getElementById('nextPageBtn');
+      const hint = document.getElementById('unlockHint');
+      if (allDone) {
+        btn.classList.remove('btn-disabled');
+        hint.style.color = 'var(--ok)';
+        hint.textContent = '解鎖成功！請前往下一頁';
+      }
+    }
+
+    // --- 核心知識 1：切換邏輯 ---
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const isThread = btn.dataset.view === 'thread';
+        document.getElementById('threadView').classList.toggle('active', isThread);
+        document.getElementById('chromosomeView').classList.toggle('active', !isThread);
+        document.getElementById('stageLabel').textContent = isThread ? '平時：細絲狀' : '分裂時：棒狀染色體';
+      });
+    });
+
+    // --- 核心知識 2：探索邏輯 ---
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const info = { dna: 'DNA：是控制遺傳的物質。', protein: '蛋白質：協助 DNA 形成染色體。(圖中紫色圓圈的部位)', chromosome: '染色體：由 DNA 和蛋白質組成。' };
+        document.getElementById('topicInfo').innerHTML = `<strong>${info[chip.dataset.topic]}</strong>`;
+        document.querySelectorAll('.hl-box').forEach(b => b.classList.remove('active'));
+        document.getElementById(`hl-${chip.dataset.topic}`).classList.add('active');
+      });
+    });
+
+    // --- 核心知識 3：配對遊戲修復 ---
+    const pairCards = document.querySelectorAll('.pair-card');
+    const pairFeedback = document.getElementById('pairFeedback');
+    let selectedPair = [];
+    let lockedPair = false;
+    let pairsMatchedCount = 0;
+
+    pairCards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (lockedPair || card.classList.contains('matched') || selectedPair.includes(card)) return;
+        card.classList.add('selected');
+        selectedPair.push(card);
+        if (selectedPair.length === 2) {
+          lockedPair = true;
+          const [a, b] = selectedPair;
+          const isCorrect = a.dataset.group === b.dataset.group;
+          setTimeout(() => {
+            a.classList.remove('selected'); b.classList.remove('selected');
+            if (isCorrect) {
+              a.classList.add('matched'); b.classList.add('matched');
+              pairsMatchedCount++;
+              pairFeedback.className = 'feedback show good'; pairFeedback.innerHTML = '配對成功！';
+              if (pairsMatchedCount === 2) { taskStatus.pairGame = true; checkAllCompleted(); }
+            } else {
+              a.classList.add('bad'); b.classList.add('bad');
+              pairFeedback.className = 'feedback show bad'; pairFeedback.innerHTML = '這兩條外型不相似，再試一次。';
+              setTimeout(() => { a.classList.remove('bad'); b.classList.remove('bad'); }, 600);
+            }
+            selectedPair = []; lockedPair = false;
+          }, 400);
+        }
+      });
+    });
+
+    // --- 第四題：連連看修復 ---
+    const matchItems = document.querySelectorAll('.match-item');
+    const matchFeedback = document.getElementById('matchFeedback');
+    let selectedLeft = null;
+    let matchedKeys = new Set();
+
+    matchItems.forEach(item => {
+      item.addEventListener('click', () => {
+        if (item.classList.contains('done')) return;
+        if (item.dataset.side === 'left') {
+          document.querySelectorAll('.match-item[data-side="left"]').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected'); selectedLeft = item;
+        } else {
+          if (!selectedLeft) { matchFeedback.className = 'feedback show bad'; matchFeedback.innerHTML = '請先點選左邊的名詞。'; return; }
+          if (selectedLeft.dataset.key === item.dataset.key) {
+            selectedLeft.classList.add('done'); item.classList.add('done');
+            matchedKeys.add(item.dataset.key);
+            matchFeedback.className = 'feedback show good'; matchFeedback.innerHTML = '答對了！';
+            if (matchedKeys.size === 3) { taskStatus.match = true; checkAllCompleted(); }
+          } else { matchFeedback.className = 'feedback show bad'; matchFeedback.innerHTML = '不對喔，再想一下。'; }
+          selectedLeft.classList.remove('selected'); selectedLeft = null;
+        }
+      });
+    });
+
+    // --- 翻翻卡 ---
+    document.querySelectorAll('.flip-card').forEach(c => c.addEventListener('click', () => c.classList.toggle('flipped')));
+
+    // --- 第六題：隨機選項功能 ---
+    const orderItems = ['DNA', '染色體', '細胞核'];
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const shuffled = shuffle([...orderItems]);
+      const selects = [document.getElementById('order1'), document.getElementById('order2'), document.getElementById('order3')];
+      selects.forEach(sel => {
+        shuffled.forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item; opt.textContent = item;
+          sel.appendChild(opt);
+        });
+      });
+    });
+
+    // 第一題作答
+    const q1Box = document.getElementById('q1');
+    const q1Btn = q1Box.querySelector('.check-btn');
+    q1Box.querySelectorAll('input').forEach(i => i.addEventListener('change', () => q1Btn.disabled = false));
+    q1Btn.addEventListener('click', () => {
+      const correct = q1Box.querySelector('input:checked').value === '1';
+      const fb = q1Box.querySelector('.feedback');
+      fb.className = `feedback show ${correct ? 'good' : 'bad'}`;
+      fb.textContent = correct ? '答對了！' : '不對喔，再想一下。';
+      if(correct) { taskStatus.q1 = true; checkAllCompleted(); }
+    });
+
+    // 第六題作答
+    const orderBtn = document.getElementById('checkOrderBtn');
+    const orderSelects = [document.getElementById('order1'), document.getElementById('order2'), document.getElementById('order3')];
+    orderSelects.forEach(s => s.addEventListener('change', () => {
+      orderBtn.disabled = !(orderSelects.every(v => v.value));
+    }));
+    orderBtn.addEventListener('click', () => {
+      const ans = orderSelects.map(s => s.value);
+      const correct = ans[0]==='DNA' && ans[1]==='染色體' && ans[2]==='細胞核';
+      const fb = document.getElementById('orderFeedback');
+      fb.className = `feedback show ${correct ? 'good' : 'bad'}`;
+      fb.textContent = correct ? '排序正確！' : '順序不對喔，提示：由小到大。';
+      if(correct) { taskStatus.order6 = true; checkAllCompleted(); }
+    });
+
+    // 暖身題隱藏作答邏輯
+    const warmupBox = document.getElementById('q-warmup');
+    const warmupBtn = warmupBox.querySelector('.check-btn');
+    warmupBox.querySelectorAll('input').forEach(i => i.addEventListener('change', () => warmupBtn.disabled = false));
+    warmupBtn.addEventListener('click', () => {
+      const correct = warmupBox.querySelector('input:checked').value === 'C';
+      if(correct) { taskStatus.warmup = true; checkAllCompleted(); warmupBox.querySelector('.feedback').className='feedback show good'; warmupBox.querySelector('.feedback').textContent='答對了！'; }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,1243 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>細胞分裂｜互動學習</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a33;
+      --panel2:#0f1730;
+      --text:#eaf0ff;
+      --muted:#aeb9dd;
+      --line:rgba(255,255,255,.14);
+      --btn:#2a3b7a;
+      --btn2:#1e2b5a;
+      --shadow:0 10px 25px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 10%, #1b2a66 0%, var(--bg) 50%, #070b18 100%);
+      color:var(--text);
+      line-height:1.65;
+    }
+    a{color:inherit}
+    .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 48px}
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(11,16,32,.82), rgba(11,16,32,.55));
+      border-bottom:1px solid var(--line);
+    }
+    header .inner{max-width:1000px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:center}
+    h1{
+      margin:0;
+      font-size: clamp(22px, 4vw, 34px);
+      letter-spacing:.08em;
+      text-align:center;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(18,26,51,.92), rgba(12,18,38,.92));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 18px;
+    }
+    .step{margin-top:18px}
+    .step h2{
+      margin:0 0 10px 0;
+      font-size: clamp(18px, 2.6vw, 22px);
+      letter-spacing:.04em;
+    }
+    .sub{
+      margin:6px 0 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .content p{margin:10px 0}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{
+      font-size:12px; color:#dfe7ff;
+      border:1px dashed rgba(255,255,255,.22);
+      padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+    }
+
+    /* keyword colors */
+    .kw{font-weight:700;padding:0 .25em;border-radius:.35em}
+    .kw1{color:#8ef0ff;background:rgba(142,240,255,.12)}
+    .kw2{color:#ffd36b;background:rgba(255,211,107,.12)}
+    .kw3{color:#b7ff9a;background:rgba(183,255,154,.12)}
+    .kw4{color:#ff9be1;background:rgba(255,155,225,.12)}
+    .kw5{color:#c7b2ff;background:rgba(199,178,255,.12)}
+
+    /* mini interactive */
+    .mini{
+      margin-top:14px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding:14px;
+    }
+    .mini .row{
+      display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;
+    }
+    .mini .viz{
+      flex:1 1 280px;
+      min-height:160px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(9,13,28,.55), rgba(255,255,255,.03));
+      display:flex;align-items:center;justify-content:center;
+      padding:10px;
+    }
+    .mini .desc{
+      flex:1 1 320px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .mini .actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+    button{
+      font:inherit;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--btn), var(--btn2));
+      border:1px solid rgba(255,255,255,.18);
+      padding:10px 14px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition: transform .05s ease, opacity .2s ease, filter .2s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+    }
+    button:hover{filter:brightness(1.08)}
+    button:active{transform: translateY(1px)}
+    button[disabled], .disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      filter:saturate(.7);
+      box-shadow:none;
+    }
+    .ghost{
+      background: transparent;
+      border:1px solid rgba(255,255,255,.2);
+      box-shadow:none;
+    }
+
+    /* quiz */
+    .question{
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+    }
+    .q-title{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin:0 0 8px 0;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .q-badge{
+      flex:0 0 auto;
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted);
+      margin-top:2px;
+    }
+    .q-body{margin-top:8px}
+    .options{display:grid;gap:8px;margin-top:10px}
+    label.opt{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:10px 10px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      cursor:pointer;
+    }
+    input[type="radio"], input[type="checkbox"]{margin-top:3px; transform: scale(1.1)}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      display:none;
+    }
+    .feedback.show{display:block}
+    .correct{
+      border:2px solid rgba(0,255,150,.9) !important;
+      background: rgba(0,255,150,.12) !important;
+    }
+    .incorrect{
+      border:2px solid rgba(255,80,80,.92) !important;
+      background: rgba(255,80,80,.12) !important;
+    }
+    .helper{
+      font-size:13px;color:var(--muted);margin-top:6px
+    }
+
+    /* dropdown matching */
+    .match{
+      display:grid; gap:10px; margin-top:10px;
+    }
+    .match-row{
+      display:grid;
+      grid-template-columns: 1fr minmax(160px, 220px);
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    select, input[type="number"], input[type="text"]{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      outline:none;
+    }
+    select:disabled, input:disabled{opacity:.7}
+
+    /* drag ordering */
+    .drag-area{
+      margin-top:10px;
+      border-radius:12px;
+      border:1px dashed rgba(255,255,255,.22);
+      background: rgba(255,255,255,.03);
+      padding:10px;
+    }
+    .drag-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+    .drag-item{
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      cursor:default;
+      user-select:none;
+    }
+    .drag-item:active{cursor:default}
+    .drag-item.dragging{opacity:.5}
+    .drag-hint{font-size:13px;color:var(--muted);margin-top:8px}
+
+    /* knowledge flip */
+    details{
+      margin-top:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+    }
+    details summary{
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    details p{color:var(--muted);margin:8px 0 0 0}
+
+    footer{
+      margin-top:22px;
+      display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;
+      padding-top:10px;
+    }
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+    }
+    .nav-btn:not(.disabled):hover{background: rgba(255,255,255,.10)}
+    .note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media (max-width:520px){
+      .match-row{grid-template-columns: 1fr}
+    }
+  
+    
+    /* -----------------------------
+       Light high-contrast theme (v2)
+       ----------------------------- */
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --panel2:#eef3ff;
+      --text:#101828;
+      --muted:#344054;
+      --line:rgba(16,24,40,.16);
+      --btn:#1d4ed8;
+      --btn2:#1e40af;
+      --shadow:0 10px 20px rgba(16,24,40,.12);
+      --radius:16px;
+    }
+    body{
+      background: radial-gradient(1200px 800px at 20% 10%, #dbeafe 0%, var(--bg) 55%, #ffffff 100%);
+      color: var(--text);
+    }
+    header{
+      background: linear-gradient(to bottom, rgba(255,255,255,.96), rgba(245,247,251,.85));
+      border-bottom: 1px solid rgba(16,24,40,.12);
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,1), rgba(255,255,255,.98));
+      border-color: rgba(16,24,40,.12);
+    }
+    .sub,.desc,.helper,.note,.q-badge{ color: var(--muted); }
+
+    /* Make keywords pop clearly on light bg */
+    .kw{ font-weight:800; }
+    .kw1{color:#0b7285;background:rgba(11,114,133,.10)}
+    .kw2{color:#b45309;background:rgba(180,83,9,.10)}
+    .kw3{color:#15803d;background:rgba(21,128,61,.10)}
+    .kw4{color:#a21caf;background:rgba(162,28,175,.10)}
+    .kw5{color:#4338ca;background:rgba(67,56,202,.10)}
+
+    .question{
+      background: rgba(16,24,40,.02);
+      border-color: rgba(16,24,40,.12);
+    }
+    label.opt{
+      background: rgba(255,255,255,.92);
+      border-color: rgba(16,24,40,.12);
+    }
+    .mini{
+      background: rgba(16,24,40,.02);
+      border-color: rgba(16,24,40,.12);
+    }
+    .mini .viz{
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(238,243,255,.72));
+      border-color: rgba(16,24,40,.12);
+    }
+    details{
+      background: rgba(255,255,255,.92);
+      border-color: rgba(16,24,40,.12);
+    }
+    .chip{
+      background: rgba(29,78,216,.06);
+      border-color: rgba(29,78,216,.18);
+      color: var(--text);
+    }
+
+    select, input[type="number"], input[type="text"]{
+      background: #ffffff;
+      color: var(--text);
+      border-color: rgba(16,24,40,.20);
+    }
+    select:focus, input[type="number"]:focus, input[type="text"]:focus{
+      outline: 3px solid rgba(29,78,216,.20);
+      border-color: rgba(29,78,216,.45);
+    }
+
+    .nav-btn{ background: rgba(16,24,40,.03); border-color: rgba(16,24,40,.16); }
+    .nav-btn:not(.disabled):hover{ background: rgba(29,78,216,.08); }
+
+    /* Keep buttons high-contrast */
+    button{ color:#ffffff; border-color: rgba(16,24,40,.12); }
+    .ghost{ color: var(--text); background: transparent; border-color: rgba(16,24,40,.20); }
+
+    /* Correct/incorrect: slightly stronger contrast on light bg */
+    .correct{
+      border:2px solid rgba(0,170,110,.95) !important;
+      background: rgba(0,170,110,.12) !important;
+    }
+    .incorrect{
+      border:2px solid rgba(220,40,40,.95) !important;
+      background: rgba(220,40,40,.12) !important;
+    }
+
+    /* Image rows */
+    .img-row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:14px 0 10px 0;
+    }
+    .img-row img{
+      flex:1 1 280px;
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid rgba(16,24,40,.12);
+      background:#ffffff;
+      box-shadow: 0 8px 18px rgba(16,24,40,.10);
+      object-fit: contain;
+      height: 200px;
+    }
+
+    /* Step 3 image stage */
+    .stage-img{
+      width:100%;
+      height: 170px;
+      object-fit: contain;
+      border-radius:12px;
+      border:1px solid rgba(16,24,40,.12);
+      background:#ffffff;
+    }
+
+    /* Order image cards (arrow controls) */
+    .drag-item.img{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px;
+      cursor:default;
+    }
+    .drag-item.img img{
+      flex:1 1 auto;
+      width:100%;
+      max-height:150px;
+      object-fit: contain;
+      border-radius:12px;
+      border:1px solid rgba(16,24,40,.12);
+      background:#ffffff;
+    }
+    .arrow-group{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:0 0 auto;
+    }
+    .arrow{
+      padding:8px 10px;
+      border-radius:12px;
+      line-height:1;
+      font-weight:800;
+      min-width:44px;
+    }
+</style>
+</head>
+
+<body>
+<header>
+  <div class="inner">
+    <h1>細胞分裂</h1>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Step 1 -->
+  <section class="step">
+    <div class="card content">
+      <h2>Step 1｜為什麼要細胞分裂？</h2>
+      <p>
+        <span class="kw kw2">細胞分裂</span> 就像「細胞的複製＋分家」：一個細胞分成兩個。
+        它對生物很重要，因為可以讓生命延續、身體維持正常運作。
+      </p>
+      <p>
+        <span class="kw kw1">單細胞生物</span> 會透過 <span class="kw kw2">細胞分裂</span> 直接產生
+        <span class="kw kw3">新個體</span>（例如 <span class="kw kw4">變形蟲</span>、<span class="kw kw4">草履蟲</span>）。
+      </p>
+      <p>
+        <span class="kw kw1">多細胞生物</span> 透過 <span class="kw kw2">細胞分裂</span> 產生
+        <span class="kw kw3">新細胞</span>，讓身體能 <span class="kw kw3">生長</span>、<span class="kw kw3">更新</span> 衰老細胞、
+        以及 <span class="kw kw3">修補</span> 受傷組織（像是 <span class="kw kw5">皮膚磨損脫落</span>、<span class="kw kw5">傷口癒合</span>）。
+      </p>
+
+      
+      <div class="img-row" aria-label="觀察圖片">
+        <img src="02_1.png" alt="圖片 02_1">
+        <img src="02_2.png" alt="圖片 02_2">
+      </div>
+
+      <div class="question" data-qid="q1">
+        <div class="q-title"><span class="q-badge">Q1 單選</span><span>單細胞生物進行細胞分裂，最主要會造成什麼結果？</span></div>
+        <div class="q-body">
+          <div class="options">
+            <label class="opt"><input type="radio" name="q1" value="A"><span>產生新個體</span></label>
+            <label class="opt"><input type="radio" name="q1" value="B"><span>幫助傷口癒合</span></label>
+            <label class="opt"><input type="radio" name="q1" value="C"><span>讓染色體數目減半</span></label>
+            <label class="opt"><input type="radio" name="q1" value="D"><span>只讓細胞變大但不增加數量</span></label>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="step">
+    <div class="card content">
+      <h2>Step 2｜單細胞 vs 多細胞：生活例子</h2>
+      <p class="sub">用兩句話記住差別：</p>
+      <div class="chips" aria-hidden="true">
+        <div class="chip"><span class="kw kw1">單細胞生物</span>：分裂 → <span class="kw kw3">新個體</span></div>
+        <div class="chip"><span class="kw kw1">多細胞生物</span>：分裂 → <span class="kw kw3">新細胞</span></div>
+      </div>
+      <p>
+        例如人類：皮膚細胞因為磨損會脫落，或是受傷時需要修補，
+        都要靠 <span class="kw kw2">細胞分裂</span> 產生 <span class="kw kw3">新細胞</span> 才能完成。
+      </p>
+
+      <div class="question" data-qid="q2">
+        <div class="q-title"><span class="q-badge">Q2 多選</span><span>多細胞生物的細胞分裂可以帶來哪些效果？（可複選）</span></div>
+        <div class="q-body">
+          <div class="options">
+            <label class="opt"><input type="checkbox" name="q2" value="grow"><span>生長（身體變大、長高）</span></label>
+            <label class="opt"><input type="checkbox" name="q2" value="renew"><span>更新衰老或磨損的細胞</span></label>
+            <label class="opt"><input type="checkbox" name="q2" value="repair"><span>修補受傷的組織（如傷口癒合）</span></label>
+            <label class="opt"><input type="checkbox" name="q2" value="half"><span>讓染色體數目減半</span></label>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+          <div class="helper">提示：想想「身體變大」「舊細胞換新」「傷口修復」三件事。</div>
+        </div>
+      </div>
+
+      <div class="question" data-qid="q3">
+        <div class="q-title"><span class="q-badge">Q3 配對</span><span>把情境配到細胞分裂的用途</span></div>
+        <div class="q-body">
+          <div class="match">
+            <div class="match-row">
+              <div>長高長大</div>
+              <div>
+                <select data-match="grow">
+                  <option value="" selected disabled>請選擇</option>
+                  <option value="grow">生長</option>
+                  <option value="renew">更新衰老的細胞</option>
+                  <option value="repair">修補受傷的組織</option>
+                </select>
+              </div>
+            </div>
+            <div class="match-row">
+              <div>皮膚磨損脫落</div>
+              <div>
+                <select data-match="renew">
+                  <option value="" selected disabled>請選擇</option>
+                  <option value="grow">生長</option>
+                  <option value="renew">更新衰老的細胞</option>
+                  <option value="repair">修補受傷的組織</option>
+                </select>
+              </div>
+            </div>
+            <div class="match-row">
+              <div>傷口癒合</div>
+              <div>
+                <select data-match="repair">
+                  <option value="" selected disabled>請選擇</option>
+                  <option value="grow">生長</option>
+                  <option value="renew">更新衰老的細胞</option>
+                  <option value="repair">修補受傷的組織</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 3 -->
+  <section class="step">
+    <div class="card content">
+      <h2>Step 3｜分裂時：染色體發生什麼事？</h2>
+
+      <p>
+        細胞分裂前，<span class="kw kw2">染色體</span> 會先 <span class="kw kw3">複製一次</span>；
+        接著細胞 <span class="kw kw3">分裂一次</span>，形成兩個 <span class="kw kw2">子細胞</span>。
+        重點是：<span class="kw kw3">子細胞染色體數目</span> 會和 <span class="kw kw2">母細胞</span> 相同。
+      </p>
+      <p>
+        例如人類細胞有 <span class="kw kw5">46條（23對）</span> 染色體，
+        分裂後兩個子細胞仍各有 <span class="kw kw5">46條（23對）</span>。
+      </p>
+
+      <div class="mini" aria-label="染色體變化互動示意">
+        <div class="row">
+          <div class="viz" id="chromViz">
+            <!-- filled by JS -->
+          </div>
+          <div class="desc">
+            <div id="chromText">按下「下一步」看看：成對染色體 → 複製 → 分離 → 兩個子細胞。</div>
+            <div class="actions">
+              <button id="chromNext">下一步</button>
+              <button id="chromReset" class="ghost">重播</button>
+            </div>
+            <div class="note">小提醒：這裡是概念示意，不是真實顯微鏡圖片。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question" data-qid="q4">
+        <div class="q-title"><span class="q-badge">Q4 排序</span><span>把「染色體變化」流程排成正確順序（用↑↓箭頭調整後才可檢查）</span></div>
+        <div class="q-body">
+          <div class="drag-area">
+            <ol class="drag-list" id="dragList" aria-label="排序清單"></ol>
+            <div class="drag-hint">操作方式：點「↑」或「↓」把圖片上移／下移到正確順序。</div>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 4 -->
+  <section class="step">
+    <div class="card content">
+      <h2>Step 4｜知識快遞＋觀念速記</h2>
+
+      <details>
+        <summary>知識快遞（點開看）</summary>
+        <p>
+          細胞在<strong>沒有</strong>分裂時，細胞核內的遺傳物質常呈
+          <span class="kw kw5">絲狀</span>，因此通常看不到「<span class="kw kw2">未複製的染色體</span>」。
+        </p>
+      </details>
+
+      <details>
+        <summary>觀念速記（點開看）</summary>
+        <p>
+          <span class="kw kw2">細胞分裂</span>：<span class="kw kw2">染色體</span> <span class="kw kw3">複製</span> __ 次，
+          細胞會 <span class="kw kw3">分裂</span> __ 次。
+        </p>
+      </details>
+
+      <div class="question" data-qid="q5">
+        <div class="q-title"><span class="q-badge">Q5 填空</span><span>把觀念速記補完整：染色體複製幾次？細胞分裂幾次？</span></div>
+        <div class="q-body">
+          <div class="options" style="grid-template-columns: 1fr 1fr; gap:12px;">
+            <div>
+              <div class="helper">染色體複製（次）</div>
+              <input type="number" inputmode="numeric" min="0" step="1" name="q5a" placeholder="例如：1">
+            </div>
+            <div>
+              <div class="helper">細胞分裂（次）</div>
+              <input type="number" inputmode="numeric" min="0" step="1" name="q5b" placeholder="例如：1">
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="question" data-qid="q6">
+        <div class="q-title"><span class="q-badge">Q6 判斷</span><span>判斷對錯：細胞分裂後，子細胞的染色體數目會比母細胞少一半。</span></div>
+        <div class="q-body">
+          <div class="options">
+            <label class="opt"><input type="radio" name="q6" value="T"><span>對</span></label>
+            <label class="opt"><input type="radio" name="q6" value="F"><span>錯</span></label>
+          </div>
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 5 -->
+  <section class="step">
+    <div class="card content">
+      <h2>Step 5｜挑戰區：整合總複習</h2>
+      <p class="sub">把前面學到的概念用在情境題上。</p>
+
+      <div class="question" data-qid="q7">
+        <div class="q-title"><span class="q-badge">Q7 情境單選</span><span>為什麼人的傷口能慢慢癒合？</span></div>
+        <div class="q-body">
+          <div class="options">
+            <label class="opt"><input type="radio" name="q7" value="A"><span>皮膚細胞進行細胞分裂，產生新細胞來修補傷口</span></label>
+            <label class="opt"><input type="radio" name="q7" value="B"><span>皮膚細胞把染色體丟掉，讓傷口消失</span></label>
+            <label class="opt"><input type="radio" name="q7" value="C"><span>只有血液會自己變多，皮膚不需要新細胞</span></label>
+            <label class="opt"><input type="radio" name="q7" value="D"><span>細胞分裂會讓傷口越來越大，所以才會癒合</span></label>
+          </div>
+
+          <div class="controls">
+            <button class="check" disabled>檢查答案</button>
+            <button class="redo ghost" style="display:none;">重做本題</button>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+          <div class="note">完成所有題目且全部答對後，頁尾「下一頁 →」才會解鎖。</div>
+        </div>
+      </div>
+
+      <footer>
+        <a class="nav-btn" href="1_236.html">← 上一頁</a>
+        <a class="nav-btn disabled" id="nextLink" href="./3_586.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
+      </footer>
+    </div>
+  </section>
+</div>
+
+<script>
+
+(function(){
+  "use strict";
+
+  // ----------------------------
+  // Utilities
+  // ----------------------------
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function qs(el, sel){ return el.querySelector(sel); }
+  function qsa(el, sel){ return Array.from(el.querySelectorAll(sel)); }
+
+  const state = {
+    q1:false,q2:false,q3:false,q4:false,q5:false,q6:false,q7:false
+  };
+
+  function allCorrect(){
+    return Object.values(state).every(Boolean);
+  }
+  function updateNextLink(){
+    const next = document.getElementById("nextLink");
+    if(allCorrect()){
+      next.classList.remove("disabled");
+      next.setAttribute("aria-disabled","false");
+      next.removeAttribute("tabindex");
+    }else{
+      next.classList.add("disabled");
+      next.setAttribute("aria-disabled","true");
+      next.setAttribute("tabindex","-1");
+    }
+  }
+  document.addEventListener("click", (e)=>{
+    const next = e.target.closest("#nextLink");
+    if(next && next.classList.contains("disabled")){
+      e.preventDefault();
+    }
+  });
+
+  function setQuestionStatus(qEl, isCorrect, feedbackHtml){
+    qEl.classList.remove("correct","incorrect");
+    qEl.classList.add(isCorrect ? "correct" : "incorrect");
+    const fb = qs(qEl, ".feedback");
+    fb.innerHTML = feedbackHtml;
+    fb.classList.add("show");
+  }
+
+  function lockQuestion(qEl, locked){
+    // lock/unlock inputs/selects
+    qsa(qEl, "input, select, textarea, button").forEach(el=>{
+      if(el.classList.contains("redo")) return; // redo controlled separately
+      if(el.classList.contains("check")) return; // check handled elsewhere
+      el.disabled = locked;
+    });
+    // ordering items (arrow controls) – keep non-draggable
+    qsa(qEl, ".drag-item").forEach(li=>{
+      li.setAttribute("draggable","false");
+      li.style.cursor = "default";
+    });
+}
+
+  function setButtonsAfterCheck(qEl, wasCorrect){
+    const check = qs(qEl, ".check");
+    const redo = qs(qEl, ".redo");
+    check.disabled = true;
+    check.dataset.locked = "true";
+    if(wasCorrect){
+      redo.style.display = "none";
+      lockQuestion(qEl, true);
+    }else{
+      redo.style.display = "inline-flex";
+      lockQuestion(qEl, true); // locked until redo
+    }
+    updateNextLink();
+  }
+
+  function resetQuestion(qEl){
+    qEl.classList.remove("correct","incorrect");
+    const fb = qs(qEl, ".feedback");
+    fb.classList.remove("show");
+    fb.innerHTML = "";
+    const check = qs(qEl, ".check");
+    const redo = qs(qEl, ".redo");
+    check.dataset.locked = "false";
+    redo.style.display = "none";
+    lockQuestion(qEl, false);
+  }
+
+  // ----------------------------
+  // Q1
+  // ----------------------------
+  function q1Answered(){
+    return !!document.querySelector('input[name="q1"]:checked');
+  }
+  function q1Evaluate(){
+    const v = document.querySelector('input[name="q1"]:checked')?.value;
+    const ok = (v === "A");
+    const fb = ok
+      ? "✅ 正確！<span class='kw kw1'>單細胞生物</span> 的 <span class='kw kw2'>細胞分裂</span> 常直接形成 <span class='kw kw3'>新個體</span>（例如變形蟲、草履蟲）。"
+      : "❌ 再想想：<span class='kw kw1'>單細胞生物</span> 只有一個細胞，分裂後就會變成兩個「個體」。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Q2
+  // ----------------------------
+  function q2Answered(){
+    return document.querySelectorAll('input[name="q2"]:checked').length > 0;
+  }
+  function q2Evaluate(){
+    const chosen = new Set(Array.from(document.querySelectorAll('input[name="q2"]:checked')).map(x=>x.value));
+    const correct = new Set(["grow","renew","repair"]);
+    const ok = chosen.size === correct.size && Array.from(correct).every(x=>chosen.has(x));
+    const fb = ok
+      ? "✅ 正確！多細胞生物透過細胞分裂產生<span class='kw kw3'>新細胞</span>，用來<span class='kw kw3'>生長</span>、<span class='kw kw3'>更新</span>衰老細胞、<span class='kw kw3'>修補</span>受傷組織。"
+      : "❌ 還差一點：正確答案包含「生長、更新、修補」。<br>提示：細胞分裂後，子細胞的染色體數目和母細胞一樣，不是減半。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Q3 matching dropdown
+  // ----------------------------
+  const q3El = document.querySelector('.question[data-qid="q3"]');
+  function randomizeSelectOptions(select){
+    const opts = Array.from(select.querySelectorAll("option"));
+    const placeholder = opts[0];
+    const rest = opts.slice(1);
+    const shuffled = shuffle(rest);
+    select.innerHTML = "";
+    select.appendChild(placeholder);
+    shuffled.forEach(o=>select.appendChild(o));
+  }
+  function q3RandomizeAll(){
+    qsa(q3El, "select").forEach(sel=>randomizeSelectOptions(sel));
+  }
+  function q3Answered(){
+    return qsa(q3El, "select").every(sel => sel.value !== "");
+  }
+  function q3Evaluate(){
+    const selects = qsa(q3El, "select");
+    const ok = selects.every(sel => sel.value === sel.dataset.match);
+    const fb = ok
+      ? "✅ 正確配對！<span class='kw kw3'>生長</span>、<span class='kw kw3'>更新</span>、<span class='kw kw3'>修補</span> 都需要靠細胞分裂產生新細胞。"
+      : "❌ 有些配對不太對喔。<br>想想：長高=生長；皮膚磨損脫落=更新；傷口癒合=修補。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Q4 ordering (arrow up/down)
+  // ----------------------------
+  const q4El = document.querySelector('.question[data-qid="q4"]');
+  const dragList = document.getElementById("dragList");
+  
+  const q4CorrectOrder = [
+    {id:"imgA", src:"02_3.png", alt:"步驟A 圖片 02_3"},
+    {id:"imgB", src:"02_4.png", alt:"步驟B 圖片 02_4"},
+    {id:"imgC", src:"02_5.png", alt:"步驟C 圖片 02_5"},
+    {id:"imgD", src:"02_6.png", alt:"步驟D 圖片 02_6"}
+  ];
+
+  let q4Touched = false;
+
+  
+  function buildDragList(){
+    dragList.innerHTML = "";
+    const startOrder = shuffle(q4CorrectOrder);
+
+    startOrder.forEach(item=>{
+      const li = document.createElement("li");
+      li.className = "drag-item img";
+      li.dataset.id = item.id;
+      li.setAttribute("draggable","false");
+      li.tabIndex = 0; // allow keyboard focus
+      li.innerHTML = `
+        <img src="${item.src}" alt="${item.alt}">
+        <div class="arrow-group" aria-label="調整順序">
+          <button type="button" class="arrow up" aria-label="上移">↑</button>
+          <button type="button" class="arrow down" aria-label="下移">↓</button>
+        </div>
+      `;
+      dragList.appendChild(li);
+    });
+
+    attachArrowHandlers();
+    updateArrowDisabled();
+    q4Touched = false;
+  }
+
+  function updateArrowDisabled(){
+    const items = qsa(dragList, ".drag-item");
+    items.forEach((li, idx)=>{
+      const up = qs(li, ".arrow.up");
+      const down = qs(li, ".arrow.down");
+      if(!up || !down) return;
+      up.disabled = (idx === 0);
+      down.disabled = (idx === items.length - 1);
+    });
+  }
+
+  function moveItem(li, dir){
+    const parent = li.parentNode;
+    if(!parent) return;
+
+    let moved = false;
+
+    if(dir === "up"){
+      const prev = li.previousElementSibling;
+      if(prev){
+        parent.insertBefore(li, prev);
+        moved = true;
+      }
+    }else if(dir === "down"){
+      const next = li.nextElementSibling;
+      if(next){
+        parent.insertBefore(next, li);
+        moved = true;
+      }
+    }
+
+    if(moved){
+      q4Touched = true;
+      updateArrowDisabled();
+      updateCheckEnabled(q4El);
+    }
+  }
+
+  function attachArrowHandlers(){
+    qsa(dragList, ".drag-item").forEach(li=>{
+      const upBtn = qs(li, ".arrow.up");
+      const downBtn = qs(li, ".arrow.down");
+
+      upBtn?.addEventListener("click", ()=>moveItem(li, "up"));
+      downBtn?.addEventListener("click", ()=>moveItem(li, "down"));
+
+      // keyboard support on focused item
+      li.addEventListener("keydown", (e)=>{
+        if(e.key === "ArrowUp"){ e.preventDefault(); moveItem(li, "up"); }
+        if(e.key === "ArrowDown"){ e.preventDefault(); moveItem(li, "down"); }
+      });
+    });
+  }
+  function q4Answered(){
+    return q4Touched; // require at least one order adjustment
+  }
+  
+  function q4Evaluate(){
+    const current = qsa(dragList, ".drag-item").map(li=>li.dataset.id);
+    const target = q4CorrectOrder.map(x=>x.id);
+    const ok = current.length === target.length && current.every((id,i)=>id===target[i]);
+    const fb = ok
+      ? "✅ 正確！順序是：成對染色體 → 複製一次 → 分離 → 分裂成兩個子細胞。"
+      : "❌ 再試一次：先是成對染色體，分裂前先複製，再分離，最後細胞分裂成兩個子細胞。";
+    return {ok, fb};
+  }
+
+
+  // ----------------------------
+  // Q5 fill blanks
+  // ----------------------------
+  function q5Answered(){
+    const a = document.querySelector('input[name="q5a"]').value.trim();
+    const b = document.querySelector('input[name="q5b"]').value.trim();
+    return a !== "" && b !== "";
+  }
+  function q5Evaluate(){
+    const a = document.querySelector('input[name="q5a"]').value.trim();
+    const b = document.querySelector('input[name="q5b"]').value.trim();
+    const ok = (a === "1" && b === "1");
+    const fb = ok
+      ? "✅ 正確！染色體先複製 <span class='kw kw3'>1</span> 次，細胞再分裂 <span class='kw kw3'>1</span> 次。"
+      : "❌ 再想想：分裂前染色體會先複製一次，接著細胞分裂一次。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Q6 True/False
+  // ----------------------------
+  function q6Answered(){
+    return !!document.querySelector('input[name="q6"]:checked');
+  }
+  function q6Evaluate(){
+    const v = document.querySelector('input[name="q6"]:checked')?.value;
+    const ok = (v === "F"); // statement is false
+    const fb = ok
+      ? "✅ 正確！細胞分裂後，兩個子細胞的染色體數目會和母細胞一樣，不會少一半。"
+      : "❌ 再想想：細胞分裂後的兩個子細胞，染色體數目與母細胞相同。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Q7 scenario
+  // ----------------------------
+  function q7Answered(){
+    return !!document.querySelector('input[name="q7"]:checked');
+  }
+  function q7Evaluate(){
+    const v = document.querySelector('input[name="q7"]:checked')?.value;
+    const ok = (v === "A");
+    const fb = ok
+      ? "✅ 正確！傷口能癒合是因為皮膚細胞進行細胞分裂，產生新細胞來修補。"
+      : "❌ 再想想：癒合需要「新細胞補上缺口」，因此要靠細胞分裂產生新細胞。";
+    return {ok, fb};
+  }
+
+  // ----------------------------
+  // Enable/disable check buttons until answered
+  // ----------------------------
+  function updateCheckEnabled(qEl){
+    const qid = qEl.dataset.qid;
+    const check = qs(qEl, ".check");
+    if(check.dataset.locked === "true") return;
+
+    let answered = false;
+    if(qid==="q1") answered = q1Answered();
+    if(qid==="q2") answered = q2Answered();
+    if(qid==="q3") answered = q3Answered();
+    if(qid==="q4") answered = q4Answered();
+    if(qid==="q5") answered = q5Answered();
+    if(qid==="q6") answered = q6Answered();
+    if(qid==="q7") answered = q7Answered();
+
+    check.disabled = !answered;
+  }
+
+  function wireAnswerListeners(){
+    // q1
+    document.querySelectorAll('input[name="q1"]').forEach(r=>{
+      r.addEventListener("change", ()=>updateCheckEnabled(document.querySelector('.question[data-qid="q1"]')));
+    });
+    // q2
+    document.querySelectorAll('input[name="q2"]').forEach(c=>{
+      c.addEventListener("change", ()=>updateCheckEnabled(document.querySelector('.question[data-qid="q2"]')));
+    });
+    // q3
+    qsa(q3El, "select").forEach(sel=>{
+      sel.addEventListener("change", ()=>updateCheckEnabled(q3El));
+    });
+    // q5
+    document.querySelectorAll('input[name="q5a"], input[name="q5b"]').forEach(inp=>{
+      inp.addEventListener("input", ()=>updateCheckEnabled(document.querySelector('.question[data-qid="q5"]')));
+    });
+    // q6
+    document.querySelectorAll('input[name="q6"]').forEach(r=>{
+      r.addEventListener("change", ()=>updateCheckEnabled(document.querySelector('.question[data-qid="q6"]')));
+    });
+    // q7
+    document.querySelectorAll('input[name="q7"]').forEach(r=>{
+      r.addEventListener("change", ()=>updateCheckEnabled(document.querySelector('.question[data-qid="q7"]')));
+    });
+  }
+
+  // ----------------------------
+  // Check buttons
+  // ----------------------------
+  function wireCheckButtons(){
+    document.querySelectorAll(".question").forEach(qEl=>{
+      const check = qs(qEl, ".check");
+      const redo  = qs(qEl, ".redo");
+
+      check.dataset.locked = "false";
+
+      check.addEventListener("click", ()=>{
+        const qid = qEl.dataset.qid;
+        let res = {ok:false, fb:""};
+        if(qid==="q1") res = q1Evaluate();
+        if(qid==="q2") res = q2Evaluate();
+        if(qid==="q3") res = q3Evaluate();
+        if(qid==="q4") res = q4Evaluate();
+        if(qid==="q5") res = q5Evaluate();
+        if(qid==="q6") res = q6Evaluate();
+        if(qid==="q7") res = q7Evaluate();
+
+        state[qid] = res.ok;
+        setQuestionStatus(qEl, res.ok, res.fb);
+        setButtonsAfterCheck(qEl, res.ok);
+      });
+
+      redo.addEventListener("click", ()=>{
+        const qid = qEl.dataset.qid;
+        state[qid] = false;
+        resetQuestion(qEl);
+
+        // reset inputs
+        if(qid==="q1"){
+          document.querySelectorAll('input[name="q1"]').forEach(r=>r.checked=false);
+        }
+        if(qid==="q2"){
+          document.querySelectorAll('input[name="q2"]').forEach(c=>c.checked=false);
+        }
+        if(qid==="q3"){
+          qsa(q3El, "select").forEach(sel=>sel.value="");
+          q3RandomizeAll();
+        }
+        if(qid==="q4"){
+          buildDragList();
+        }
+        if(qid==="q5"){
+          document.querySelector('input[name="q5a"]').value="";
+          document.querySelector('input[name="q5b"]').value="";
+        }
+        if(qid==="q6"){
+          document.querySelectorAll('input[name="q6"]').forEach(r=>r.checked=false);
+        }
+        if(qid==="q7"){
+          document.querySelectorAll('input[name="q7"]').forEach(r=>r.checked=false);
+        }
+
+        updateCheckEnabled(qEl);
+        updateNextLink();
+      });
+
+      // initialize
+      updateCheckEnabled(qEl);
+    });
+  }
+
+  // ----------------------------
+  // Chromosome mini-stepper (simple SVG)
+  // ----------------------------
+  
+  const chromSteps = [
+    {
+      title: "A｜成對染色體（母細胞）",
+      text: "細胞內先有成對的染色體（概念示意）。",
+      render: () => `<img class="stage-img" src="02_3.png" alt="步驟A 圖片 02_3">`
+    },
+    {
+      title: "B｜分裂前：染色體複製一次",
+      text: "分裂前，染色體會先複製一次，準備平均分配。",
+      render: () => `<img class="stage-img" src="02_4.png" alt="步驟B 圖片 02_4">`
+    },
+    {
+      title: "C｜複製的染色體分離",
+      text: "複製後的染色體開始分離，準備分到兩個子細胞。",
+      render: () => `<img class="stage-img" src="02_5.png" alt="步驟C 圖片 02_5">`
+    },
+    {
+      title: "D｜細胞分裂：形成兩個子細胞",
+      text: "細胞分裂一次形成兩個子細胞；每個子細胞染色體數目和母細胞相同。",
+      render: () => `<img class="stage-img" src="02_6.png" alt="步驟D 圖片 02_6">`
+    }
+  ];
+
+  let chromIdx = 0;
+  const chromViz = document.getElementById("chromViz");
+  const chromText = document.getElementById("chromText");
+  const chromNext = document.getElementById("chromNext");
+  const chromReset = document.getElementById("chromReset");
+
+  function svgCells(model){
+    // Minimal inline SVG: two circles (cells) with colored bars (chromosomes)
+    const w=360,h=180;
+    const cellR=58;
+    const cx1=120, cy=90;
+    const cx2=260;
+    const hasRight = !!model.right;
+
+    function chromBars(cx, cy, cfg){
+      // pair: 2 colors; copies: 1 or 2; split adds small gap
+      const bars=[];
+      const colors=["#8ef0ff","#ff9be1"]; // father/mother style (not explicitly stated)
+      const baseX = cx - 18;
+      const gap = cfg.split ? 18 : 8;
+      const copyOffset = (cfg.copies===2) ? 8 : 0;
+
+      for(let p=0;p<2;p++){
+        // each "chromosome" as a vertical rounded rect, maybe doubled if copied
+        const x = baseX + p*gap;
+        const y = cy - 26;
+        const color = colors[p%2];
+        bars.push(`<rect x="${x}" y="${y}" width="10" height="52" rx="5" fill="${color}" opacity="0.95"/>`);
+        if(cfg.copies===2){
+          bars.push(`<rect x="${x+copyOffset}" y="${y}" width="10" height="52" rx="5" fill="${color}" opacity="0.55"/>`);
+        }
+      }
+      return bars.join("");
+    }
+
+    const leftCfg = model.left?.[0] || {pair:true,copies:1};
+    const rightCfg = model.right?.[0] || {pair:true,copies:1};
+
+    return `
+      <svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" role="img" aria-label="染色體變化示意圖">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="rgba(255,255,255,.18)"/>
+            <stop offset="1" stop-color="rgba(255,255,255,.05)"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="${cx1}" cy="${cy}" r="${cellR}" fill="url(#g1)" stroke="rgba(255,255,255,.20)" stroke-width="2"/>
+        ${chromBars(cx1, cy, leftCfg)}
+
+        ${hasRight ? `
+          <circle cx="${cx2}" cy="${cy}" r="${cellR}" fill="url(#g1)" stroke="rgba(255,255,255,.20)" stroke-width="2"/>
+          ${chromBars(cx2, cy, rightCfg)}
+          <path d="M${cx1+cellR+10},${cy} C${cx1+cellR+40},${cy-40} ${cx2-cellR-40},${cy+40} ${cx2-cellR-10},${cy}"
+                stroke="rgba(255,255,255,.18)" stroke-width="3" fill="none" stroke-dasharray="6 6"/>
+        ` : `
+          <text x="${cx2}" y="${cy}" fill="rgba(255,255,255,.25)" font-size="14" text-anchor="middle">（尚未分裂成兩個細胞）</text>
+        `}
+      </svg>
+    `;
+  }
+
+  function renderChrom(){
+    const s = chromSteps[chromIdx];
+    chromViz.innerHTML = s.render();
+    chromText.innerHTML = `<strong>${s.title}</strong><br>${s.text}`;
+  }
+  chromNext.addEventListener("click", ()=>{
+    chromIdx = (chromIdx + 1) % chromSteps.length;
+    renderChrom();
+  });
+  chromReset.addEventListener("click", ()=>{
+    chromIdx = 0;
+    renderChrom();
+  });
+
+  // ----------------------------
+  // Init
+  // ----------------------------
+  q3RandomizeAll();
+  buildDragList();
+  wireAnswerListeners();
+  wireCheckButtons();
+  renderChrom();
+  updateNextLink();
+
+})();
+</script>
+</body>
+</html>

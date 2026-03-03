@@ -609,9 +609,8 @@
                 <span id="goalBig" class="goal">—</span><span id="goalName" style="display:none">—</span>
               </div>
               <div class="chipsRow" aria-label="狀態列">
-                <span class="chip">收集：<b id="goalCount">0</b>/<span id="goalNeed">3</span></span>
+                <span class="chip">本關：<b id="goalCount">0</b>/<span id="goalNeed">3</span</span>
                 <span class="chip">分數：<b id="score">0</b></span>
-                <span class="chip">生命：<b id="lives">5</b></span>
                 <span class="chip">關卡：<b id="level">1</b>/6</span>
               </div>
             </div>
@@ -647,7 +646,7 @@
 <div class="overlay show" id="startOverlay" role="dialog" aria-modal="true" aria-label="遊戲說明頁">
   <div class="modal">
     <h3>🎮 遊戲說明｜無性生殖貪吃蛇</h3>
-    <p class="small">這是一個「玩中評量」的闖關遊戲：吃對生物卡就加分並累積蒐集數；吃錯會扣分與扣生命。每關蒐集滿 <b>3</b> 個目標即可進入下一關。</p>
+    <p class="small">這是一個「玩中評量」的闖關遊戲：吃對生物卡就加分並累積正確數；吃錯或撞到牆／自己會扣分並重置位置（不計算生命）。每關只要吃到任意 <b>3</b> 張生物卡（不論對錯）就會進入下一關（共 6 關，合計 <b>18</b> 次目標）。</p>
 
     <div class="explain show" style="display:block">
       <b style="color:rgba(238,243,255,.92)">操作方式</b><br>
@@ -656,9 +655,9 @@
 
       <b style="color:rgba(238,243,255,.92)">闖關規則</b><br>
       1) 每關會指定「目標繁殖方式」。<br>      1-1) 畫面同時會出現 <b>6</b> 種生物卡可吃（含目標與干擾）。<br>
-      2) 吃到 <b>目標</b>：+10 分、蒐集 +1、蛇變長。<br>
-      3) 吃到 <b>非目標/迷思</b>（如受精、減數分裂、種子）：扣分、扣 1 生命、蛇縮短。<br>
-      4) 每關蒐集滿 <b>3</b> 個目標 → 自動進入下一關（共 6 關）。<br><br><b style=\"color:rgba(238,243,255,.92)\">通過條件</b><br>• 總分達到 <b>60</b> 分以上才算通過，結束時才會出現「進入下一頁」。<br><br>
+      2) 吃到 <b>目標</b>：+10 分、正確 +1、蛇變長。<br>
+      3) 吃到 <b>非目標/迷思</b>（如受精、減數分裂、種子）：扣分、蛇縮短。<br>
+      4) 每關吃到任意 <b>3</b> 張生物卡 → 自動進入下一關（不論對錯；是否吃對只影響分數）。<br><br><b style=\"color:rgba(238,243,255,.92)\">通過條件</b><br>• 需完成 <b>18</b> 次目標（6 關 × 每關 3 次），且總分達到 <b>60</b> 分以上才算通過；結算時才會出現「進入下一頁」。<br><br>
 
       <b style="color:rgba(238,243,255,.92)">小提醒</b><br>
       • 孢子 ≠ 種子。<br>
@@ -687,6 +686,8 @@
     { id:"veg",    name:"營養器官繁殖", need:3, color:"#f97316", hint:"根/莖/葉等長成新植株" },
     { id:"tissue", name:"組織培養", need:3, color:"#22c55e", hint:"無菌操作＋培養基＋馴化移植" }
   ];
+
+  const TOTAL_GOALS = GROUPS.reduce((sum,g) => sum + g.need, 0);
 
   const ITEMS = [
     // split
@@ -733,7 +734,6 @@
     goalCount: document.getElementById('goalCount'),
     goalNeed: document.getElementById('goalNeed'),
     score: document.getElementById('score'),
-    lives: document.getElementById('lives'),
     level: document.getElementById('level'),
     feedback: document.getElementById('feedback'),    summaryText: document.getElementById('summaryText'),
     playAgain: document.getElementById('playAgain'),
@@ -758,8 +758,7 @@
   let goalCount = 0;
 
   let score = 0;
-  let lives = 5;
-
+  
   const stats = Object.fromEntries(GROUPS.map(g => [g.id, { correct:0, wrong:0 }]));
   let totalWrong = 0;
 
@@ -773,7 +772,7 @@
 
   // timing
   let lastTick = 0;
-  let stepMs = 280; // 速度（毫秒/步）- 數字越大越慢
+  let stepMs = 420; // 速度（毫秒/步）- 數字越大越慢
 
   function setFeedback(type, html){
     ui.feedback.classList.remove('correct','incorrect','show');
@@ -814,7 +813,6 @@
     goalCount = 0;
 
     score = 0;
-    lives = 5;
     totalWrong = 0;
 
     for(const g of GROUPS){
@@ -860,8 +858,7 @@
     ui.goalCount.textContent = String(goalCount);
     ui.goalNeed.textContent = String(goalNeed);
     ui.score.textContent = String(score);
-    ui.lives.textContent = String(lives);
-    ui.level.textContent = String(levelIdx + 1);
+ui.level.textContent = String(levelIdx + 1);
   }
 
   function randomItemForSet(goalId, count){
@@ -974,14 +971,10 @@
     const nx = head.x + dir.x;
     const ny = head.y + dir.y;
 
-    // wall collision -> lose life, reset snake length & position
+    // wall/self collision -> 扣分並重置位置（不計算生命）
     if(nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H || collisionWithSelf(nx,ny)){
-      lives--;
-      setFeedback('bad', `❌ 撞到了！扣 1 生命。<span style="color:var(--muted)">（小心牆/自己）</span>`);
-      if(lives <= 0){
-        endGame(false);
-        return;
-      }
+      score -= 5;
+      setFeedback('bad', `❌ 撞到了！扣 <b>5</b> 分並重新定位。<span style="color:var(--muted)">（小心牆/自己）</span>`);
       // soft reset position, keep level progress
       const cx = Math.floor(GRID_W/2), cy = Math.floor(GRID_H/2);
       snake = [];
@@ -1002,17 +995,16 @@
       const it = foods[idx].item;
 
       const isCorrect = (it.group === goalGroup);
+      goalCount += 1; // 本關已吃到的次數（不論對錯）
       if(isCorrect){
         score += 10;
-        goalCount += 1;
         stats[goalGroup].correct += 1;
         setFeedback('ok', `✅ 正確！吃到「${it.name}」→ 屬於 <b>${GROUPS[levelIdx].name}</b>。<span style="color:var(--muted)">（${it.note}）</span>`);
         // replace all foods for fresh choices
         spawnFoodSet(FOOD_COUNT);
       }else{
         score -= (it.group === "not" ? 12 : 8);
-        lives -= 1;
-        totalWrong += 1;
+totalWrong += 1;
         stats[goalGroup].wrong += 1;
 
         // shrink a bit
@@ -1026,12 +1018,7 @@
         setFeedback('bad', `❌ 吃錯了！${why} <span style="color:var(--muted)">（${it.note}）</span>`);
         // replace only this food to keep challenge
         replaceOneFood(idx);
-
-        if(lives <= 0){
-          endGame(false);
-          return;
-        }
-      }
+}
 
       // if ate, keep tail (we already added head; to grow, we do not pop). If not eaten, pop tail below.
       // For correct eat we also keep tail; for wrong we already popped extra above; still should keep movement growth logic.
@@ -1053,7 +1040,7 @@
   function advanceLevel(){
     // brief pause so player notices the transition
     paused = true;
-    setFeedback('ok', `🎯 達標！進入下一關：<b>${nextLevelName()}</b>`);
+    setFeedback('ok', `➡️ 本關完成！進入下一關：<b>${nextLevelName()}</b>`);
     setTimeout(() => {
       levelIdx++;
       if(levelIdx >= GROUPS.length){
@@ -1082,23 +1069,31 @@ function endGame(success){
     running = false;
     paused = true;
 
-    const passed = score >= PASS_SCORE;
+    const completed = GROUPS.reduce((sum,g) => sum + stats[g.id].correct + stats[g.id].wrong, 0);
+    const correct = GROUPS.reduce((sum,g) => sum + stats[g.id].correct, 0);
+    const wrong = completed - correct;
+    const needGoals = Math.max(0, TOTAL_GOALS - completed);
+    const needScore = Math.max(0, PASS_SCORE - score);
 
-    const base = success
-      ? `🎉 遊戲結束（已完成 6 關）`
-      : `💥 遊戲結束（生命歸零）`;
+    const passed = success && (completed >= TOTAL_GOALS) && (score >= PASS_SCORE);
 
-    const resultLine = passed
+    const base = `🎉 遊戲結束（已完成 ${completed}/${TOTAL_GOALS} 次目標；正確 ${correct}、吃錯 ${wrong}）`;
+
+    const why = passed
       ? `✅ <b>通過</b>！總分 <b>${score}</b>（達到 ${PASS_SCORE} 分）`
-      : `❌ <b>挑戰失敗</b>：總分 <b>${score}</b>（未達 ${PASS_SCORE} 分，差 ${Math.max(0, PASS_SCORE - score)} 分）`;
+      : `❌ <b>未通過</b>：` +
+        `${needGoals ? `尚需完成 <b>${needGoals}</b> 次目標` : ''}` +
+        `${(needGoals && needScore) ? '，' : ''}` +
+        `${needScore ? `總分還差 <b>${needScore}</b> 分` : ''}` +
+        `${(!needGoals && !needScore) ? `未達通過條件` : ''}`;
 
-        ui.summaryText.innerHTML = `${base}<br>${resultLine}<br><br>` + buildSummaryHTML();
+    ui.summaryText.innerHTML = `${base}<br>${why}<br><br>` + buildSummaryHTML();
 
     // bottom feedback
     if(passed){
       setFeedback('ok', `✅ 通過！總分 ${score} 分`);
     }else{
-      setFeedback('bad', `❌ 挑戰失敗：未達 ${PASS_SCORE} 分`);
+      setFeedback('bad', `❌ 未通過：未達條件`);
     }
 
     // buttons: playAgain always, next page only when passed
@@ -1107,10 +1102,11 @@ function endGame(success){
     if(nextBtn) nextBtn.style.display = passed ? 'inline-flex' : 'none';
   }
 
-  function buildLiveSummaryHTML(){
+function buildLiveSummaryHTML(){
     const g = GROUPS[levelIdx];
     const title = g ? `<span class=\"pill\">目前目標：${g.name}</span>` : '';
-    const head = `${title} <span style=\"color:var(--muted)\">｜關卡 ${levelIdx+1}/6｜收集 ${goalCount}/${goalNeed}｜分數 ${score}｜生命 ${lives}</span>`;
+    const totalCorrect = GROUPS.reduce((sum,x) => sum + stats[x.id].correct, 0);
+    const head = `${title} <span style=\"color:var(--muted)\">｜關卡 ${levelIdx+1}/6｜本關已吃 ${goalCount}/${goalNeed}｜累計正確 ${totalCorrect}/${TOTAL_GOALS}｜分數 ${score}</span>`;
     const boxes = GROUPS.map(x => {
       const st = stats[x.id];
       return `<div class=\"summaryBox\"><b>${x.name}</b>正確吃到：${st.correct}｜吃錯：${st.wrong}</div>`;
