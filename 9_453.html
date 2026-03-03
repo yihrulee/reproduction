@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>開花植物的有性生殖｜互動練習</title>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --ink:#1c2430;
+      --muted:#556070;
+      --line:#d7deea;
+      --shadow: 0 12px 30px rgba(16,24,40,.10);
+      --radius:18px;
+
+      --good:#1f9d55;
+      --goodBg:#e9f8ef;
+      --bad:#e11d48;
+      --badBg:#ffe8ee;
+
+      --btn:#2f56ff;
+      --btnText:#ffffff;
+      --btn2:#eef2ff;
+      --btn2Text:#23304a;
+
+      --banner1:#2f56ff;
+      --banner2:#24c3ff;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(1200px 500px at 15% 0%, rgba(47,86,255,.16), transparent 60%),
+                  radial-gradient(900px 500px at 85% 10%, rgba(36,195,255,.18), transparent 55%),
+                  var(--bg);
+      color:var(--ink);
+    }
+
+    /* Full-width banner */
+    header.hero{
+      width:100%;
+      color:#fff;
+      background: linear-gradient(120deg, var(--banner1), var(--banner2));
+      padding: 28px 18px 22px;
+    }
+    .hero-inner{
+      max-width: 980px;
+      margin: 0 auto;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .hero h1{
+      margin:0;
+      font-size: clamp(22px, 3.3vw, 34px);
+      letter-spacing:.5px;
+      line-height:1.15;
+    }
+    .hero p{
+      margin:8px 0 0;
+      opacity:.92;
+      max-width: 52ch;
+      line-height:1.5;
+      font-size: 14.5px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.22);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .badge b{ font-weight:700; }
+
+    main{
+      max-width: 980px;
+      margin: 18px auto 90px;
+      padding: 0 18px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .body{ padding: 18px 18px 16px; }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(47,86,255,.08), rgba(47,86,255,0));
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.3px;
+    }
+    .hint{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Teaching text */
+    .text p{
+      margin: 10px 0;
+      text-indent: 2em;
+      line-height: 1.85;
+      font-size: 15.5px;
+      color:#243146;
+    }
+    .kw{
+      font-weight: 800;
+      padding: 0 .25em;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.06);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .kw1{ color:#8a2be2; background: rgba(138,43,226,.12); }
+    .kw2{ color:#1d4ed8; background: rgba(29,78,216,.12); }
+    .kw3{ color:#0f766e; background: rgba(15,118,110,.12); }
+    .kw4{ color:#b45309; background: rgba(180,83,9,.12); }
+    .kw5{ color:#be185d; background: rgba(190,24,93,.12); }
+    .kw6{ color:#047857; background: rgba(4,120,87,.12); }
+    .kw7{ color:#7c2d12; background: rgba(124,45,18,.12); }
+    .kw8{ color:#334155; background: rgba(51,65,85,.12); }
+
+    .photo{
+      margin-top: 14px;
+      border-top:1px solid var(--line);
+      background: #f9fbff;
+      padding: 14px 18px 18px;
+    }
+    .photo img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 14px;
+      border: 1px solid rgba(16,24,40,.10);
+      box-shadow: 0 10px 22px rgba(16,24,40,.08);
+    }
+
+    /* Practice */
+    .practice-wrap{ margin-top: 18px; }
+    .q-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .q-card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .q-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 10px;
+    }
+    .q-no{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      height:34px;
+      border-radius: 12px;
+      background: rgba(47,86,255,.10);
+      color: #1d2a50;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+    .q-title{
+      margin: 0 0 4px;
+      font-size: 15.5px;
+      line-height:1.35;
+    }
+    .q-sub{
+      margin:0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+
+    .q-body{
+      margin-top: 10px;
+      display:grid;
+      gap:10px;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      padding: 6px 2px;
+    }
+    .opt{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(16,24,40,.10);
+      background: rgba(255,255,255,.75);
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{
+      margin-top: 2px;
+      transform: scale(1.15);
+    }
+    .opt span{ line-height:1.45; }
+    .opt:hover{ border-color: rgba(47,86,255,.35); }
+
+    .short-input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(16,24,40,.14);
+      font-size: 15px;
+      outline:none;
+      background: #fff;
+    }
+    .short-input:focus{ border-color: rgba(47,86,255,.7); box-shadow: 0 0 0 4px rgba(47,86,255,.12); }
+
+    .order-list{
+      display:grid;
+      gap:10px;
+      padding: 0;
+      margin: 0;
+      list-style:none;
+    }
+    .order-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(16,24,40,.10);
+      background: rgba(255,255,255,.80);
+    }
+    .order-item .label{
+      flex: 1 1 auto;
+      line-height:1.45;
+    }
+    .order-actions{
+      display:flex;
+      gap:6px;
+      flex: 0 0 auto;
+    }
+    .mini{
+      border:1px solid rgba(16,24,40,.12);
+      background: #fff;
+      color:#1f2a44;
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 800;
+      line-height:1;
+    }
+    .mini:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .controls{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+    .btn{
+      border:0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 800;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition: transform .04s ease, opacity .15s ease;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn-primary{
+      background: var(--btn);
+      color: var(--btnText);
+    }
+    .btn-secondary{
+      background: var(--btn2);
+      color: var(--btn2Text);
+      border: 1px solid rgba(47,86,255,.18);
+    }
+    .btn[disabled]{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none !important;
+    }
+
+    .feedback{
+      display:none;
+      margin-top: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(16,24,40,.18);
+      background: rgba(249,250,251,.9);
+      color:#1f2a44;
+      line-height:1.6;
+      font-size: 14px;
+    }
+    .feedback.show{ display:block; }
+
+    .q-card.correct{
+      border-color: rgba(31,157,85,.55);
+      background: linear-gradient(180deg, var(--goodBg), #fff);
+      box-shadow: 0 10px 26px rgba(31,157,85,.16);
+    }
+    .q-card.incorrect{
+      border-color: rgba(225,29,72,.55);
+      background: linear-gradient(180deg, var(--badBg), #fff);
+      box-shadow: 0 10px 26px rgba(225,29,72,.14);
+    }
+
+    /* Footer nav */
+    footer.navbar{
+      position: fixed;
+      left:0; right:0; bottom:0;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(16,24,40,.12);
+      padding: 12px 14px;
+    }
+    .nav-inner{
+      max-width: 980px;
+      margin: 0 auto;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .nav-btn{
+      text-decoration:none;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 900;
+      border: 1px solid rgba(16,24,40,.12);
+      color:#1f2a44;
+      background: #fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-width: 128px;
+    }
+    .nav-btn:hover{ border-color: rgba(47,86,255,.35); }
+    .nav-btn.disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+    .status{
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .status b{ color:#1f2a44; }
+
+    @media (min-width: 860px){
+      .q-grid{ grid-template-columns: 1fr 1fr; }
+      .q-card{ padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div>
+        <h1>開花植物的有性生殖</h1>
+        <p>閱讀下方五段重點整理，完成四題互動練習。<b>全部答對</b>後，才能解鎖「下一頁 →」。</p>
+      </div>
+      <div class="badge" aria-label="進度狀態">
+        ✅ 互動練習 <b>4 題</b>｜🔓 解鎖條件：<b>全對</b>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Teaching text -->
+    <section class="card" aria-labelledby="teachTitle">
+      <div class="section-title">
+        <h2 id="teachTitle">教學文本（五段）</h2>
+        <p class="hint">彩色標記為關鍵字</p>
+      </div>
+
+      <div class="body text">
+        <p>
+          植物進行<span class="kw kw1">有性生殖</span>時，也會產生<span class="kw kw2">配子</span>，行<span class="kw kw3">受精</span>作用。
+          以<span class="kw kw4">開花植物</span>為例，<span class="kw kw5">花、果實和種子</span>是開花植物的生殖器官，
+          典型的花有<span class="kw kw6">萼片</span>、<span class="kw kw7">花瓣</span>、<span class="kw kw8">雄蕊</span>和<span class="kw kw2">雌蕊</span>，
+          且共同著生在<span class="kw kw4">花托</span>上。
+        </p>
+        <p>
+          <span class="kw kw8">雄蕊</span>包括<span class="kw kw7">花絲</span>和<span class="kw kw6">花藥</span>，<span class="kw kw6">花藥</span>內含大量<span class="kw kw5">花粉</span>。
+        </p>
+        <p>
+          <span class="kw kw5">花粉</span>通常藉由<span class="kw kw4">風</span>、<span class="kw kw7">昆蟲</span>或<span class="kw kw3">鳥</span>等媒介來傳播，
+          花粉落到雌蕊<span class="kw kw2">柱頭</span>上的過程稱為<span class="kw kw1">授粉</span>。
+        </p>
+        <p>
+          <span class="kw kw1">授粉</span>後，花粉會萌發出<span class="kw kw3">花粉管</span>，
+          花粉內的<span class="kw kw6">精細胞</span>會經由花粉管進入雌蕊子房中的<span class="kw kw8">胚珠</span>，
+          與胚珠內的<span class="kw kw7">卵</span>結合<span class="kw kw3">受精</span>。
+        </p>
+        <p>
+          <span class="kw kw3">受精</span>後，<span class="kw kw4">子房</span>膨大發育成果實，
+          <span class="kw kw8">胚珠</span>發育成<span class="kw kw5">種子</span>。
+          當種子傳播到適當環境中，便可<span class="kw kw6">萌芽</span>長成新個體。
+        </p>
+      </div>
+
+      <div class="photo">
+        <img src="9_1.png" alt="開花植物的有性生殖相關照片" />
+      </div>
+    </section>
+
+    <!-- Practice -->
+    <section class="practice-wrap" aria-labelledby="pracTitle">
+      <div class="card">
+        <div class="section-title">
+          <h2 id="pracTitle">互動練習（四題｜類型不重複）</h2>
+          <p class="hint">每題提交後會鎖定；答錯可重做本題。</p>
+        </div>
+
+        <div class="body">
+          <div class="q-grid">
+
+            <!-- Q1 Radio -->
+            <section class="q-card" id="q1" data-q="1">
+              <div class="q-head">
+                <div class="q-no">1</div>
+                <div style="flex:1 1 auto;">
+                  <p class="q-title">單選題：典型的花<strong>不包含</strong>下列哪一構造？</p>
+                  <p class="q-sub">提示：文本提到「萼片、花瓣、雄蕊和雌蕊」。</p>
+                </div>
+              </div>
+
+              <div class="q-body">
+                <div class="options" role="radiogroup" aria-label="第1題選項">
+                  <label class="opt"><input type="radio" name="q1opt" value="萼片" /> <span>萼片</span></label>
+                  <label class="opt"><input type="radio" name="q1opt" value="雄蕊" /> <span>雄蕊</span></label>
+                  <label class="opt"><input type="radio" name="q1opt" value="葉" /> <span>葉</span></label>
+                  <label class="opt"><input type="radio" name="q1opt" value="雌蕊" /> <span>雌蕊</span></label>
+                </div>
+
+                <div class="controls">
+                  <button class="btn btn-primary" id="q1check" disabled>檢查答案</button>
+                  <button class="btn btn-secondary" id="q1retry" style="display:none;">重做本題</button>
+                </div>
+
+                <div class="feedback" id="q1fb" aria-live="polite"></div>
+              </div>
+            </section>
+
+            <!-- Q2 Checkbox -->
+            <section class="q-card" id="q2" data-q="2">
+              <div class="q-head">
+                <div class="q-no">2</div>
+                <div style="flex:1 1 auto;">
+                  <p class="q-title">多選題：下列哪些可作為花粉傳播的媒介？（可複選）</p>
+                  <p class="q-sub">請選出文本中提到的媒介。</p>
+                </div>
+              </div>
+
+              <div class="q-body">
+                <div class="options" aria-label="第2題選項">
+                  <label class="opt"><input type="checkbox" name="q2opt" value="風" /> <span>風</span></label>
+                  <label class="opt"><input type="checkbox" name="q2opt" value="昆蟲" /> <span>昆蟲</span></label>
+                  <label class="opt"><input type="checkbox" name="q2opt" value="鳥" /> <span>鳥</span></label>
+                  <label class="opt"><input type="checkbox" name="q2opt" value="地震" /> <span>地震</span></label>
+                  <label class="opt"><input type="checkbox" name="q2opt" value="閃電" /> <span>閃電</span></label>
+                </div>
+
+                <div class="controls">
+                  <button class="btn btn-primary" id="q2check" disabled>檢查答案</button>
+                  <button class="btn btn-secondary" id="q2retry" style="display:none;">重做本題</button>
+                </div>
+
+                <div class="feedback" id="q2fb" aria-live="polite"></div>
+              </div>
+            </section>
+
+            <!-- Q3 Dropdown -->
+            <section class="q-card" id="q3" data-q="3">
+              <div class="q-head">
+                <div class="q-no">3</div>
+                <div style="flex:1 1 auto;">
+                  <p class="q-title">下拉選單題：授粉後，花粉會萌發出哪個構造，讓精細胞能進入胚珠？</p>
+                  <p class="q-sub">請從下拉選單選出正確答案（提示：文本第四段）。</p>
+                </div>
+              </div>
+
+              <div class="q-body">
+                <select class="short-input" id="q3select" aria-label="第3題下拉選單">
+                  <option value="">請選擇答案</option>
+                  <option value="花粉管">花粉管</option>
+                  <option value="花絲">花絲</option>
+                  <option value="柱頭">柱頭</option>
+                  <option value="花托">花托</option>
+                </select>
+
+                <div class="controls">
+                  <button class="btn btn-primary" id="q3check" disabled>檢查答案</button>
+                  <button class="btn btn-secondary" id="q3retry" style="display:none;">重做本題</button>
+                </div>
+
+                <div class="feedback" id="q3fb" aria-live="polite"></div>
+              </div>
+            </section>
+
+            <!-- Q4 Ordering -->
+            <section class="q-card" id="q4" data-q="4">
+              <div class="q-head">
+                <div class="q-no">4</div>
+                <div style="flex:1 1 auto;">
+                  <p class="q-title">排序題：請用上下箭頭把「開花植物有性生殖」的步驟排成正確順序。</p>
+                  <p class="q-sub">完成排序後再按「檢查答案」。</p>
+                </div>
+              </div>
+
+              <div class="q-body">
+                <ul class="order-list" id="q4list" aria-label="第4題排序清單">
+                  <!-- JS will render items -->
+                </ul>
+
+                <div class="controls">
+                  <button class="btn btn-primary" id="q4check" disabled>檢查答案</button>
+                  <button class="btn btn-secondary" id="q4retry" style="display:none;">重做本題</button>
+                </div>
+
+                <div class="feedback" id="q4fb" aria-live="polite"></div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="navbar" role="contentinfo">
+    <div class="nav-inner">
+      <a class="nav-btn" href="8_603.html">← 上一頁</a>
+
+      <div class="status" id="statusText" aria-live="polite">
+        目前進度：<b><span id="doneCount">0</span>/4</b> 題正確｜下一頁：<b id="lockState">未解鎖</b>
+      </div>
+
+      <a class="nav-btn disabled" id="nextBtn" href="./10_154.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const state = { q1:false, q2:false, q3:false, q4:false };
+
+      function setCardResult(cardEl, isCorrect, msg){
+        cardEl.classList.remove('correct','incorrect');
+        cardEl.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+        const fb = cardEl.querySelector('.feedback');
+        fb.innerHTML = msg;
+        fb.classList.add('show');
+      }
+
+      function lockCard(cardEl, locked){
+        const inputs = cardEl.querySelectorAll('input, select, textarea, button.mini');
+        inputs.forEach(el => { el.disabled = locked; });
+      }
+
+      function lockCheckBtn(cardEl){
+        const btn = cardEl.querySelector('.btn-primary');
+        btn.disabled = true;
+      }
+
+      function showRetry(cardEl, show){
+        const retry = cardEl.querySelector('.btn-secondary');
+        retry.style.display = show ? 'inline-flex' : 'none';
+      }
+
+      function updateFooter(){
+        const done = Object.values(state).filter(Boolean).length;
+        document.getElementById('doneCount').textContent = String(done);
+
+        const nextBtn = document.getElementById('nextBtn');
+        const lockState = document.getElementById('lockState');
+
+        if(done === 4){
+          nextBtn.classList.remove('disabled');
+          nextBtn.removeAttribute('aria-disabled');
+          nextBtn.removeAttribute('tabindex');
+          lockState.textContent = '已解鎖';
+          lockState.style.color = '#1f9d55';
+        }else{
+          nextBtn.classList.add('disabled');
+          nextBtn.setAttribute('aria-disabled','true');
+          nextBtn.setAttribute('tabindex','-1');
+          lockState.textContent = '未解鎖';
+          lockState.style.color = '';
+        }
+      }
+
+      // Prevent navigation if disabled (extra safety)
+      document.getElementById('nextBtn').addEventListener('click', (e)=>{
+        if(e.currentTarget.classList.contains('disabled')) e.preventDefault();
+      });
+
+      // Q1 logic (radio)
+      const q1 = document.getElementById('q1');
+      const q1check = document.getElementById('q1check');
+      const q1retry = document.getElementById('q1retry');
+      q1.querySelectorAll('input[name="q1opt"]').forEach(r=>{
+        r.addEventListener('change', ()=>{
+          if(!q1.classList.contains('correct')) q1check.disabled = false;
+        });
+      });
+
+      q1check.addEventListener('click', ()=>{
+        const picked = q1.querySelector('input[name="q1opt"]:checked');
+        if(!picked) return;
+        const ans = picked.value;
+        const ok = (ans === '葉');
+        lockCard(q1, true);
+        lockCheckBtn(q1);
+        showRetry(q1, !ok);
+
+        if(ok){
+          state.q1 = true;
+          setCardResult(q1, true, '✅ 正確！典型的花包含萼片、花瓣、雄蕊與雌蕊；「葉」不是花的構造。');
+        }else{
+          state.q1 = false;
+          setCardResult(q1, false, '❌ 錯誤：請回到第一段想想「典型的花」有哪些構造。');
+        }
+        updateFooter();
+      });
+
+      q1retry.addEventListener('click', ()=>{
+        // reset
+        q1.classList.remove('correct','incorrect');
+        q1.querySelector('.feedback').classList.remove('show');
+        q1.querySelector('.feedback').innerHTML = '';
+        q1.querySelectorAll('input[name="q1opt"]').forEach(r=>{ r.checked = false; r.disabled = false; });
+        q1check.disabled = true;
+        showRetry(q1, false);
+        state.q1 = false;
+        updateFooter();
+      });
+
+      // Q2 logic (checkbox)
+      const q2 = document.getElementById('q2');
+      const q2check = document.getElementById('q2check');
+      const q2retry = document.getElementById('q2retry');
+
+      function q2HasAny(){
+        return [...q2.querySelectorAll('input[name="q2opt"]:checked')].length > 0;
+      }
+      q2.querySelectorAll('input[name="q2opt"]').forEach(cb=>{
+        cb.addEventListener('change', ()=>{
+          if(!q2.classList.contains('correct')) q2check.disabled = !q2HasAny();
+        });
+      });
+
+      q2check.addEventListener('click', ()=>{
+        const picked = new Set([...q2.querySelectorAll('input[name="q2opt"]:checked')].map(x=>x.value));
+        if(picked.size === 0) return;
+
+        const correct = new Set(['風','昆蟲','鳥']);
+        const ok = (picked.size === correct.size) && [...correct].every(v => picked.has(v));
+
+        lockCard(q2, true);
+        lockCheckBtn(q2);
+        showRetry(q2, !ok);
+
+        if(ok){
+          state.q2 = true;
+          setCardResult(q2, true, '✅ 正確！文本指出花粉可藉由風、昆蟲或鳥等媒介傳播。');
+        }else{
+          state.q2 = false;
+          setCardResult(q2, false, '❌ 錯誤：請只選擇文本第三段提到的媒介（風／昆蟲／鳥）。');
+        }
+        updateFooter();
+      });
+
+      q2retry.addEventListener('click', ()=>{
+        q2.classList.remove('correct','incorrect');
+        q2.querySelector('.feedback').classList.remove('show');
+        q2.querySelector('.feedback').innerHTML = '';
+        q2.querySelectorAll('input[name="q2opt"]').forEach(cb=>{ cb.checked = false; cb.disabled = false; });
+        q2check.disabled = true;
+        showRetry(q2, false);
+        state.q2 = false;
+        updateFooter();
+      });
+
+      // Q3 logic (dropdown)
+      const q3 = document.getElementById('q3');
+      const q3select = document.getElementById('q3select');
+      const q3check = document.getElementById('q3check');
+      const q3retry = document.getElementById('q3retry');
+
+      q3select.addEventListener('change', ()=>{
+        if(q3.classList.contains('correct')) return;
+        q3check.disabled = (q3select.value.trim() === '');
+      });
+
+      q3check.addEventListener('click', ()=>{
+        const picked = q3select.value.trim();
+        if(!picked) return;
+
+        const ok = (picked === '花粉管');
+
+        lockCard(q3, true);
+        lockCheckBtn(q3);
+        showRetry(q3, !ok);
+
+        if(ok){
+          state.q3 = true;
+          setCardResult(q3, true, '✅ 正確！授粉後花粉會萌發出「花粉管」，精細胞可沿花粉管進入子房中的胚珠。');
+        }else{
+          state.q3 = false;
+          setCardResult(q3, false, '❌ 錯誤：再讀第四段，想想花粉萌發後會長出什麼「管狀構造」。');
+        }
+        updateFooter();
+      });
+
+      q3retry.addEventListener('click', ()=>{
+        q3.classList.remove('correct','incorrect');
+        q3.querySelector('.feedback').classList.remove('show');
+        q3.querySelector('.feedback').innerHTML = '';
+        q3select.value = '';
+        q3select.disabled = false;
+        q3check.disabled = true;
+        showRetry(q3, false);
+        state.q3 = false;
+        updateFooter();
+      });
+
+      // Q4 logic (ordering list)
+      const q4 = document.getElementById('q4');
+      const q4list = document.getElementById('q4list');
+      const q4check = document.getElementById('q4check');
+      const q4retry = document.getElementById('q4retry');
+
+      const correctOrder = [
+        '授粉（花粉落到柱頭）',
+        '花粉萌發出花粉管',
+        '精細胞進入胚珠並與卵受精',
+        '子房成果實、胚珠成種子'
+      ];
+
+      const startOrder = [
+        '花粉萌發出花粉管',
+        '子房成果實、胚珠成種子',
+        '授粉（花粉落到柱頭）',
+        '精細胞進入胚珠並與卵受精'
+      ];
+
+      let currentOrder = [...startOrder];
+      let touched = false;
+
+      function renderOrder(){
+        q4list.innerHTML = '';
+        currentOrder.forEach((txt, idx)=>{
+          const li = document.createElement('li');
+          li.className = 'order-item';
+
+          const label = document.createElement('div');
+          label.className = 'label';
+          label.innerHTML = `<b>步驟 ${idx+1}</b>：${escapeHtml(txt)}`;
+
+          const actions = document.createElement('div');
+          actions.className = 'order-actions';
+
+          const up = document.createElement('button');
+          up.className = 'mini';
+          up.type = 'button';
+          up.textContent = '↑';
+          up.disabled = (idx === 0);
+
+          const down = document.createElement('button');
+          down.className = 'mini';
+          down.type = 'button';
+          down.textContent = '↓';
+          down.disabled = (idx === currentOrder.length - 1);
+
+          up.addEventListener('click', ()=>{
+            touched = true;
+            swap(idx, idx-1);
+          });
+          down.addEventListener('click', ()=>{
+            touched = true;
+            swap(idx, idx+1);
+          });
+
+          actions.appendChild(up);
+          actions.appendChild(down);
+
+          li.appendChild(label);
+          li.appendChild(actions);
+          q4list.appendChild(li);
+        });
+
+        if(!q4.classList.contains('correct')){
+          q4check.disabled = !touched;
+        }
+      }
+
+      function swap(i,j){
+        if(j<0 || j>=currentOrder.length) return;
+        const tmp = currentOrder[i];
+        currentOrder[i] = currentOrder[j];
+        currentOrder[j] = tmp;
+        renderOrder();
+      }
+
+      function escapeHtml(str){
+        return String(str)
+          .replaceAll('&','&amp;')
+          .replaceAll('<','&lt;')
+          .replaceAll('>','&gt;')
+          .replaceAll('"','&quot;')
+          .replaceAll("'","&#039;");
+      }
+
+      q4check.addEventListener('click', ()=>{
+        if(!touched) return;
+        const ok = currentOrder.every((v, i)=> v === correctOrder[i]);
+
+        lockCard(q4, true);
+        lockCheckBtn(q4);
+        showRetry(q4, !ok);
+
+        if(ok){
+          state.q4 = true;
+          setCardResult(q4, true, '✅ 正確！順序：授粉 → 花粉管 → 受精 → 果實與種子形成。');
+        }else{
+          state.q4 = false;
+          setCardResult(q4, false, '❌ 錯誤：想想授粉之後才會形成花粉管；受精之後才會形成果實與種子。');
+        }
+        updateFooter();
+      });
+
+      q4retry.addEventListener('click', ()=>{
+        q4.classList.remove('correct','incorrect');
+        q4.querySelector('.feedback').classList.remove('show');
+        q4.querySelector('.feedback').innerHTML = '';
+        currentOrder = [...startOrder];
+        touched = false;
+        // unlock inputs: buttons in list are recreated as enabled
+        showRetry(q4, false);
+        state.q4 = false;
+        updateFooter();
+        renderOrder();
+      });
+
+      // initial render
+      renderOrder();
+      updateFooter();
+    })();
+  </script>
+</body>
+</html>
