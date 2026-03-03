@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>繁殖行為連連看（24題｜直線/直角）</title>
+  <style>
+    :root{
+      --bg:#eef2f7;
+      --panel:#ffffff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --ok:#16a34a;
+      --bad:#e11d48;
+      --line:#2563eb;
+      --shadow: 0 14px 34px rgba(15,23,42,.12);
+      --radius: 14px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #ffffff 0%, var(--bg) 55%, #e6edf6 100%);
+      color: var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding: 22px 14px 34px;
+    }
+    .app{
+      width:min(980px, 100%);
+      background: rgba(255,255,255,.7);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header{
+      padding: 16px 18px 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82));
+      border-bottom: 1px solid rgba(15,23,42,.08);
+    }
+    h1{
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      letter-spacing: .3px;
+    }
+    .desc{
+      display:grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .desc b{ color: var(--text); }
+    .rules{
+      display:grid;
+      gap: 6px;
+      padding: 10px 12px;
+      background: rgba(241,245,249,.8);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 12px;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 12px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 12px 18px 14px;
+      background: rgba(255,255,255,.6);
+    }
+    .hud{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 12px;
+      align-items:center;
+    }
+    .pill{
+      background: var(--panel);
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+      display:flex;
+      gap: 6px;
+      align-items:center;
+      box-shadow: 0 8px 18px rgba(15,23,42,.08);
+    }
+    .pill .k{ color: var(--muted); }
+    .pill .v{ font-weight: 800; }
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    button{
+      border: 1px solid rgba(15,23,42,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(241,245,249,.9));
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      box-shadow: 0 10px 22px rgba(15,23,42,.10);
+    }
+    button:hover{ filter: brightness(1.02); }
+    button:active{ transform: translateY(1px); }
+    button.secondary{
+      background: rgba(255,255,255,.7);
+      box-shadow: none;
+    }
+
+    main{
+      padding: 14px 18px 22px;
+    }
+    .boardWrap{
+      position: relative;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 18px;
+      padding: 16px;
+      overflow: hidden;
+    }
+    svg#lineLayer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+    }
+    .board{
+      position: relative;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      z-index: 1;
+    }
+    .tile{
+      min-height: 82px;
+      padding: 10px 10px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,251,214,.98), rgba(255,243,174,.92));
+      border: 2px solid rgba(15,23,42,.10);
+      box-shadow: 0 10px 18px rgba(15,23,42,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      white-space: pre-line;
+      line-height: 1.25;
+      font-size: 18px;
+      font-weight: 800;
+      user-select:none;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, opacity .22s ease;
+    }
+    .tile:hover{ transform: translateY(-1px); }
+    .tile.selected{
+      border-color: rgba(37,99,235,.9);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.18), 0 12px 26px rgba(15,23,42,.12);
+      transform: translateY(-1px) scale(1.01);
+    }
+    .tile.wrong{
+      border-color: rgba(225,29,72,.9);
+      box-shadow: 0 0 0 4px rgba(225,29,72,.16);
+      animation: shake .24s linear;
+    }
+    @keyframes shake{
+      0%{ transform: translateX(0); }
+      25%{ transform: translateX(-3px); }
+      50%{ transform: translateX(3px); }
+      75%{ transform: translateX(-2px); }
+      100%{ transform: translateX(0); }
+    }
+    .tile.matched{
+      opacity: 0;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      cursor: default;
+      color: transparent;
+      pointer-events: none;
+      transform: scale(.98);
+    }
+    .tile.center{
+      background: linear-gradient(180deg, rgba(148,163,184,.35), rgba(148,163,184,.22));
+      border-color: rgba(100,116,139,.35);
+      box-shadow: none;
+      cursor: default;
+      color: rgba(15,23,42,.72);
+      font-size: 20px;
+      letter-spacing: 2px;
+      pointer-events:none;
+    }
+
+    .result{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.8);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .hidden{ display:none; }
+
+    .match-line{
+      stroke: var(--line);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: .92;
+      filter: drop-shadow(0 6px 10px rgba(37,99,235,.22));
+      animation: pop .55s ease-out forwards;
+    }
+    @keyframes pop{
+      0%{ opacity: 0; stroke-dasharray: 4 16; }
+      25%{ opacity: .95; }
+      100%{ opacity: 0; stroke-dasharray: 1 0; }
+    }
+
+    .smallNote{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    @media (max-width: 520px){
+      .tile{ font-size: 15px; min-height: 74px; }
+      .boardWrap{ padding: 12px; }
+      main{ padding: 12px; }
+    }
+  
+/* footer navigation */
+.footerNav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 14px 18px 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.92));
+  border-top: 1px solid rgba(15,23,42,.08);
+}
+.navBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text);
+  text-decoration:none;
+  border: 1px solid rgba(15,23,42,.14);
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(241,245,249,.9));
+  box-shadow: 0 10px 22px rgba(15,23,42,.10);
+  user-select:none;
+}
+.navBtn:hover{ filter: brightness(1.02); }
+.navBtn:active{ transform: translateY(1px); }
+.navBtn.disabled{
+  opacity:.45;
+  pointer-events:none;
+  box-shadow:none;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>繁殖行為連連看（24題）</h1>
+      <div class="desc">
+        <div class="rules">
+          <div><b>類別：</b> <b>求偶</b>（吸引配偶）／<b>護卵</b>（保護或孵卵）／<b>育幼</b>（照顧幼體）。</div>
+          <div><b>玩法：</b>點兩個「同類別」項目，若能用<b>一直線</b>或<b>一個直角</b>連起來，且<b>連線不能穿過未消失項目</b>，就消除並得分。</div>
+          <div><b>過關：</b>題目皆被消除即可過關（連錯也可，解鎖下一頁）。</div>
+          <div><b>結束：</b>75 秒到，或 24 個項目全部消除即停止。</div>
+        </div>
+        <div>計分：成功 +10；連續成功第 2 次起每次額外 +2（連越多加越多）；連錯 -5。提示類別會 -10（顯示 2 秒）。</div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="hud" aria-live="polite">
+        <div class="pill"><span class="k">⏱️ 時間</span><span class="v" id="time">75</span></div>
+        <div class="pill"><span class="k">⭐ 分數</span><span class="v" id="score">0</span></div>
+        <div class="pill"><span class="k">🔥 連續</span><span class="v" id="streak">0</span></div>
+        <div class="pill"><span class="k">✅ 成功</span><span class="v" id="ok">0</span></div>
+        <div class="pill"><span class="k">❌ 連錯</span><span class="v" id="bad">0</span></div>
+      </div>
+      <div class="actions">
+        <button id="startBtn">開始 / 重新開始</button>
+        <button class="secondary" id="revealBtn" title="顯示各卡片類別 2 秒（扣 10 分）">提示類別（-10）</button>
+      </div>
+    </div>
+
+    <main>
+      <div class="boardWrap" id="boardWrap">
+        <svg id="lineLayer"></svg>
+        <div class="board" id="board" role="grid" aria-label="繁殖行為連連看 5×5"></div>
+      </div>
+
+      <div class="result hidden" id="result"></div>
+      <div class="smallNote">小提醒：中間「繁殖行為」是標題，不用配對。</div>
+    </main>
+
+
+<footer class="footerNav" aria-label="頁尾導覽">
+  <a class="navBtn" href="6_368.html">← 上一頁</a>
+  <a class="navBtn disabled" id="nextPage" href="./8_603.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
+</footer>
+  </div>
+
+  <script>
+  (() => {
+    const GRID = 5;
+    const CENTER_IDX = 12;
+
+    // 24 個項目（8 求偶 / 8 護卵 / 8 育幼；含課本+課外例子；文字精簡）
+    const ITEMS = [
+      // 求偶 (8)
+      {t:"昆蟲散發\n氣味", c:"求偶"},
+      {t:"紅鮭變成\n鮮紅", c:"求偶"},
+      {t:"雄蛙\n鳴叫", c:"求偶"},
+      {t:"軍艦鳥\n鼓喉", c:"求偶"},
+      {t:"孔雀\n開屏", c:"求偶"},
+      {t:"螢火蟲\n閃光", c:"求偶"},
+      {t:"雄鹿\n低沉吼", c:"求偶"},
+      {t:"極樂鳥\n求偶舞", c:"求偶"},
+
+      // 護卵 (8)
+      {t:"蝦卵黏\n腹部", c:"護卵"},
+      {t:"蟹卵抱\n腹部", c:"護卵"},
+      {t:"企鵝腳背\n孵卵", c:"護卵"},
+      {t:"章魚守護\n卵串", c:"護卵"},
+      {t:"口孵魚\n含卵", c:"護卵"},
+      {t:"鱷魚\n守巢", c:"護卵"},
+      {t:"鬥魚築\n泡泡巢", c:"護卵"},
+      {t:"蜘蛛做\n卵囊", c:"護卵"},
+
+      // 育幼 (8)
+      {t:"獼猴\n哺乳", c:"育幼"},
+      {t:"企鵝餵\n食糜", c:"育幼"},
+      {t:"袋鼠育兒袋\n哺乳", c:"育幼"},
+      {t:"母雞帶領\n覓食", c:"育幼"},
+      {t:"母貓舔幼\n清潔", c:"育幼"},
+      {t:"海豚帶幼\n學覓食", c:"育幼"},
+      {t:"母獅教導\n狩獵", c:"育幼"},
+      {t:"蜜蜂餵\n幼蟲", c:"育幼"},
+    ];
+
+    const board = document.getElementById("board");
+    const wrap = document.getElementById("boardWrap");
+    const svg = document.getElementById("lineLayer");
+
+    const timeEl = document.getElementById("time");
+    const scoreEl = document.getElementById("score");
+    const streakEl = document.getElementById("streak");
+    const okEl = document.getElementById("ok");
+    const badEl = document.getElementById("bad");
+    const resultEl = document.getElementById("result");
+
+    const startBtn = document.getElementById("startBtn");
+    const revealBtn = document.getElementById("revealBtn");
+
+    let running = false;
+    let timer = null;
+    let timeLeft = 75;
+
+    let score = 0;
+    let streak = 0;
+    let ok = 0;
+    let bad = 0;
+
+    let selected = null; // element
+
+    const tilesByIdx = new Map();
+
+
+const nextPage = document.getElementById("nextPage");
+let passed = false;
+
+function updateNav(){
+  if (!nextPage) return;
+  const totalPairs = ITEMS.length / 2;
+  // 僅當題目皆被消除：完成所有配對（連錯也可）
+  passed = (ok === totalPairs);
+
+  if (passed){
+    nextPage.classList.remove("disabled");
+    nextPage.setAttribute("aria-disabled","false");
+    nextPage.removeAttribute("tabindex");
+  } else {
+    nextPage.classList.add("disabled");
+    nextPage.setAttribute("aria-disabled","true");
+    nextPage.setAttribute("tabindex","-1");
+  }
+}
+
+
+    function clampScore(){ if (score < 0) score = 0; }
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function idxToRC(idx){ return {r: Math.floor(idx / GRID), c: idx % GRID}; }
+    function rcToIdx(r,c){ return r * GRID + c; }
+
+    function resetSvg(){
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    }
+
+    function centerPoint(el){
+      const wrapRect = wrap.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return { x: (r.left + r.right)/2 - wrapRect.left, y: (r.top + r.bottom)/2 - wrapRect.top };
+    }
+
+    function drawPath(idxList){
+      const pts = idxList.map(i => centerPoint(tilesByIdx.get(i)));
+      const pl = document.createElementNS("http://www.w3.org/2000/svg","polyline");
+      pl.setAttribute("points", pts.map(p => `${p.x},${p.y}`).join(" "));
+      pl.setAttribute("class","match-line");
+      svg.appendChild(pl);
+      setTimeout(() => { try { svg.removeChild(pl); } catch(_){} }, 650);
+    }
+
+    function isBlockedIdx(idx){
+      if (idx === CENTER_IDX) return true;
+      const el = tilesByIdx.get(idx);
+      if (!el) return true;
+      return !el.classList.contains("matched");
+    }
+    function isEmptyIdx(idx){
+      if (idx === CENTER_IDX) return false;
+      const el = tilesByIdx.get(idx);
+      if (!el) return false;
+      return el.classList.contains("matched");
+    }
+
+    function clearRow(r, c1, c2){
+      const lo = Math.min(c1,c2);
+      const hi = Math.max(c1,c2);
+      for (let c = lo + 1; c <= hi - 1; c++){
+        const idx = rcToIdx(r,c);
+        if (idx === CENTER_IDX) return false;
+        const el = tilesByIdx.get(idx);
+        if (el && !el.classList.contains("matched")) return false;
+      }
+      return true;
+    }
+
+    function clearCol(c, r1, r2){
+      const lo = Math.min(r1,r2);
+      const hi = Math.max(r1,r2);
+      for (let r = lo + 1; r <= hi - 1; r++){
+        const idx = rcToIdx(r,c);
+        if (idx === CENTER_IDX) return false;
+        const el = tilesByIdx.get(idx);
+        if (el && !el.classList.contains("matched")) return false;
+      }
+      return true;
+    }
+
+    // 回傳路徑（idx 陣列）：[a,b] 或 [a,corner,b]；若不可連線回傳 null
+    function findPath(aIdx, bIdx){
+      const A = idxToRC(aIdx);
+      const B = idxToRC(bIdx);
+
+      // 直線
+      if (A.r === B.r){
+        if (clearRow(A.r, A.c, B.c)) return [aIdx, bIdx];
+      }
+      if (A.c === B.c){
+        if (clearCol(A.c, A.r, B.r)) return [aIdx, bIdx];
+      }
+
+      // 一個直角：corner1 = (A.r, B.c)
+      const c1 = rcToIdx(A.r, B.c);
+      if (c1 !== CENTER_IDX && isEmptyIdx(c1)){
+        if (clearRow(A.r, A.c, B.c) && clearCol(B.c, A.r, B.r)){
+          return [aIdx, c1, bIdx];
+        }
+      }
+      // corner2 = (B.r, A.c)
+      const c2 = rcToIdx(B.r, A.c);
+      if (c2 !== CENTER_IDX && isEmptyIdx(c2)){
+        if (clearCol(A.c, A.r, B.r) && clearRow(B.r, B.c, A.c)){
+          return [aIdx, c2, bIdx];
+        }
+      }
+      return null;
+    }
+
+    function updateHud(){
+      timeEl.textContent = String(timeLeft);
+      scoreEl.textContent = String(score);
+      streakEl.textContent = String(streak);
+      okEl.textContent = String(ok);
+      badEl.textContent = String(bad);
+      updateNav();
+    }
+
+    function countAdjSameCat(cells){
+      let cnt = 0;
+      for (let idx = 0; idx < GRID*GRID; idx++){
+        if (idx === CENTER_IDX) continue;
+        const it = cells[idx];
+        if (!it) continue;
+        const {r,c} = idxToRC(idx);
+        const rightIdx = (c < GRID-1) ? rcToIdx(r,c+1) : -1;
+        const downIdx = (r < GRID-1) ? rcToIdx(r+1,c) : -1;
+        if (rightIdx !== -1 && rightIdx !== CENTER_IDX && cells[rightIdx] && cells[rightIdx].c === it.c) cnt++;
+        if (downIdx !== -1 && downIdx !== CENTER_IDX && cells[downIdx] && cells[downIdx].c === it.c) cnt++;
+      }
+      return cnt;
+    }
+
+    function makeBoard(){
+      let best = null;
+      let bestAdj = -1;
+      for (let tries = 0; tries < 250; tries++){
+        const items = shuffle(ITEMS);
+        const cells = new Array(GRID*GRID).fill(null);
+        let k = 0;
+        for (let idx = 0; idx < GRID*GRID; idx++){
+          if (idx === CENTER_IDX) continue;
+          cells[idx] = items[k++];
+        }
+        const adj = countAdjSameCat(cells);
+        if (adj > bestAdj){
+          bestAdj = adj; best = cells;
+        }
+        if (adj >= 6) return cells; // 讓開局更容易有相鄰可連
+      }
+      return best;
+    }
+
+    function renderBoard(cells){
+      board.innerHTML = "";
+      resetSvg();
+      tilesByIdx.clear();
+      selected = null;
+
+      for (let idx = 0; idx < GRID*GRID; idx++){
+        const d = document.createElement("div");
+        d.className = "tile";
+        d.dataset.idx = String(idx);
+        d.dataset.r = String(Math.floor(idx/GRID));
+        d.dataset.c = String(idx%GRID);
+
+        if (idx === CENTER_IDX){
+          d.classList.add("center");
+          d.textContent = "繁殖行為";
+          d.setAttribute("aria-label","標題：繁殖行為");
+        } else {
+          const it = cells[idx];
+          d.classList.add("playable");
+          d.dataset.cat = it.c;
+          d.dataset.text = it.t;
+          d.textContent = it.t;
+
+          d.addEventListener("click", () => onPick(d));
+          d.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(d); }
+          });
+          d.setAttribute("role","gridcell");
+          d.setAttribute("tabindex","0");
+        }
+
+        board.appendChild(d);
+        tilesByIdx.set(idx, d);
+      }
+    }
+
+    function end(reason){
+      running = false;
+      if (timer) clearInterval(timer);
+      timer = null;
+
+      if (selected){
+        selected.classList.remove("selected");
+        selected = null;
+      }
+
+      const total = ok + bad;
+      const acc = total ? Math.round((ok / total) * 100) : 0;
+      const totalPairs = ITEMS.length / 2;
+      const passedNow = (ok === totalPairs);
+const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
+      const title = (reason === "win") ? `全部完成！${verdict}` : `時間到！${verdict}`;
+      const extra = (reason === "win") ? `剩餘時間：<strong>${timeLeft}</strong> 秒` : "";
+
+      resultEl.innerHTML = `
+        <div style="font-size:16px;font-weight:900;margin-bottom:6px;">${title}</div>
+        <div>⭐ 最終得分：<strong>${score}</strong> ${extra ? "｜" + extra : ""}</div>
+                <div style="margin-top:6px;">🏁 結果：<strong>${verdict}</strong>（題目皆被消除過關）</div>
+<div>✅ 成功：<strong>${ok}</strong>　❌ 連錯：<strong>${bad}</strong>　🎯 正確率：<strong>${acc}%</strong></div>
+        <div style="margin-top:8px;color:var(--muted);">按「開始 / 重新開始」可再玩一次。</div>
+      `;
+      resultEl.classList.remove("hidden");
+    }
+
+    function remainingPlayable(){
+      let left = 0;
+      for (let idx = 0; idx < GRID*GRID; idx++){
+        if (idx === CENTER_IDX) continue;
+        const el = tilesByIdx.get(idx);
+        if (el && !el.classList.contains("matched")) left++;
+      }
+      return left;
+    }
+
+    function onPick(tile){
+      if (!running) return;
+      if (tile.classList.contains("matched")) return;
+      if (tile.classList.contains("center")) return;
+
+      if (!selected){
+        selected = tile;
+        tile.classList.add("selected");
+        return;
+      }
+
+      if (tile === selected){
+        selected.classList.remove("selected");
+        selected = null;
+        return;
+      }
+
+      const a = selected;
+      const b = tile;
+      const aIdx = Number(a.dataset.idx);
+      const bIdx = Number(b.dataset.idx);
+
+      // 類別相同且路徑合法才算成功
+      const sameCat = a.dataset.cat === b.dataset.cat;
+      const path = sameCat ? findPath(aIdx, bIdx) : null;
+
+      if (path){
+        ok += 1;
+        streak += 1;
+
+        let add = 10;
+        if (streak >= 2) add += (streak - 1) * 2;
+        score += add;
+        clampScore();
+
+        a.classList.remove("selected");
+        a.classList.add("matched");
+        b.classList.add("matched");
+
+        drawPath(path);
+
+        selected = null;
+      } else {
+        bad += 1;
+        streak = 0;
+        score -= 5;
+        clampScore();
+
+        a.classList.remove("selected");
+        a.classList.add("wrong");
+        b.classList.add("wrong");
+
+        setTimeout(() => {
+          a.classList.remove("wrong");
+          b.classList.remove("wrong");
+        }, 260);
+
+        selected = null;
+      }
+
+      updateHud();
+
+      if (remainingPlayable() === 0){
+        end("win");
+      }
+    }
+
+            function start(){
+      running = true;
+      timeLeft = 75;
+      score = 0;
+      passed = false;
+      streak = 0;
+      ok = 0;
+      bad = 0;
+      resultEl.classList.add("hidden");
+
+      const cells = makeBoard();
+      renderBoard(cells);
+      updateHud();
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        if (!running) return;
+        timeLeft -= 1;
+        updateHud();
+        if (timeLeft <= 0) end("time");
+      }, 1000);
+    }
+
+    function revealCategories(){
+      if (!running) return;
+
+      score -= 10;
+      clampScore();
+      updateHud();
+
+      const tiles = [...board.querySelectorAll(".tile.playable")];
+      tiles.forEach(t => {
+        if (t.classList.contains("matched")) return;
+        t.dataset.prevText = t.textContent;
+        t.textContent = `【${t.dataset.cat}】\n${t.dataset.text}`;
+      });
+
+      setTimeout(() => {
+        tiles.forEach(t => {
+          if (!t.dataset.prevText) return;
+          t.textContent = t.dataset.prevText;
+          delete t.dataset.prevText;
+        });
+      }, 2000);
+    }
+
+    // keep lines aligned on resize
+    window.addEventListener("resize", () => resetSvg());
+
+    startBtn.addEventListener("click", start);
+    revealBtn.addEventListener("click", revealCategories);
+
+    // initial preview board (not running)
+    renderBoard(makeBoard());
+    updateHud();
+  })();
+  </script>
+</body>
+</html>

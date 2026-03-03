@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>動物生殖大挑戰 - 打地鼠評量</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --panel: rgba(255, 255, 255, 0.5);
+            --primary: #6366f1;
+            --success: #16a34a;
+            --error: #dc2626;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Noto Sans TC", sans-serif;
+            color: var(--text);
+            background: radial-gradient(at 0% 0%, #e0f2fe 0, transparent 50%), 
+                        radial-gradient(at 50% 0%, #fef3c7 0, transparent 50%), 
+                        radial-gradient(at 100% 0%, #fae8ff 0, transparent 50%), 
+                        radial-gradient(at 50% 100%, #dcfce7 0, transparent 50%), #f8fafc;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            background: var(--panel);
+            padding: 10px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .mission-box {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+
+        #mission-text {
+            font-size: 20px;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-template-rows: repeat(3, 120px);
+            gap: 20px;
+            background: rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .hole {
+            position: relative;
+            background: #78350f;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: inset 0 10px 0 rgba(0,0,0,0.3);
+        }
+
+        .mole {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 90px;
+            background: #a78bfa;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: top 0.2s ease-out;
+            text-align: center;
+            padding: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .mole.up { top: 15%; }
+
+        .mole.correct-hit { background: var(--success) !important; }
+        .mole.wrong-hit { background: var(--error) !important; }
+
+        .nav-bar {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background: #475569;
+        }
+
+        .btn-primary { background: var(--primary); }
+
+        #next-page.disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .feedback-pop {
+            position: absolute;
+            top: -20px;
+            font-weight: 900;
+            white-space: nowrap;
+            animation: floatUp 0.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            to { top: -50px; opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-header">
+    <h1>🐾 動物生殖大挑戰</h1>
+    <p>根據指令打擊正確的地鼠，滿150分即可通關！</p>
+</div>
+
+<div class="status-bar">
+    <span>得分：<span id="score">0</span> / 150</span>
+</div>
+
+<div class="mission-box">
+    <div>當前任務：</div>
+    <div id="mission-text">準備開始...</div>
+</div>
+
+<div class="grid">
+    <div class="hole"><div class="mole" id="m0"></div></div>
+    <div class="hole"><div class="mole" id="m1"></div></div>
+    <div class="hole"><div class="mole" id="m2"></div></div>
+    <div class="hole"><div class="mole" id="m3"></div></div>
+    <div class="hole"><div class="mole" id="m4"></div></div>
+    <div class="hole"><div class="mole" id="m5"></div></div>
+    <div class="hole"><div class="mole" id="m6"></div></div>
+    <div class="hole"><div class="mole" id="m7"></div></div>
+    <div class="hole"><div class="mole" id="m8"></div></div>
+</div>
+
+<div class="nav-bar">
+    <button class="btn btn-primary" onclick="startGame()">開始遊戲</button>
+    <a href="4_123.html" class="btn">← 上一頁</a>
+    <a href="./6_368.html" id="next-page" class="btn disabled">下一頁 →</a>
+</div>
+
+<script>
+    const missions = [
+        { text: "尋找【體外受精】的動物或特徵", targetType: "external" },
+        { text: "尋找【體內受精】的動物或特徵", targetType: "internal" },
+        { text: "尋找【卵生】的動物或特徵", targetType: "egg" },
+        { text: "尋找【胎生】的動物或特徵", targetType: "baby" }
+    ];
+
+    const moleData = [
+        { name: "珊瑚", types: ["external", "egg"], note: "釋放大量精卵到水中" },
+        { name: "小丑魚", types: ["external", "egg"], note: "在水中受精發育" },
+        { name: "非洲水牛", types: ["internal", "baby"], note: "體內受精，產出胎兒" },
+        { name: "紅鶴", types: ["internal", "egg"], note: "交配受精，體外孵化" },
+        { name: "兩生類", types: ["external", "egg"], note: "通常在水中排卵" },
+        { name: "昆蟲", types: ["internal", "egg"], note: "行交配行為" },
+        { name: "哺乳類", types: ["internal", "baby"], note: "母體內發育" },
+        { name: "交配行為", types: ["internal"], note: "體內受精必備" },
+        { name: "大量精卵", types: ["external"], note: "增加成功機會" }
+    ];
+
+    // === 遊戲參數：大幅調慢與設定分數 ===
+    const MAX_ACTIVE = 3;              
+    const SPAWN_MIN = 1000;            // 每次生成的最小間隔 (1秒)
+    const SPAWN_MAX = 2000;            // 每次生成的最大間隔 (2秒)
+    const UP_TIME_MIN = 2500;          // 停留最短時間 (2.5秒)
+    const UP_TIME_MAX = 4000;          // 停留最長時間 (4秒)
+    const SCORE_CORRECT = 10;          
+    const SCORE_WRONG = 5;             
+    const PASS_SCORE = 150;            // 修改為 150 分過關
+
+    let score = 0;
+    let activeMission = null;
+    let gameActive = false;
+const activeHoles = new Set();     
+    let spawnTimer = null;
+
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function startGame() {
+        if (gameActive) return;
+        score = 0;
+gameActive = true;
+        activeHoles.clear();
+        for (let i = 0; i < 9; i++) {
+            const el = document.getElementById(`m${i}`);
+            el.classList.remove('up', 'correct-hit', 'wrong-hit');
+            el.innerText = "";
+            el.onclick = null;
+        }
+        updateUI();
+        nextMission();
+        spawnLoop();
+    }
+
+    function nextMission() {
+        activeMission = missions[Math.floor(Math.random() * missions.length)];
+        document.getElementById('mission-text').innerText = activeMission.text;
+    }
+
+    function spawnLoop() {
+        if (!gameActive) return;
+        if (activeHoles.size < MAX_ACTIVE) spawnOneMole();
+        const nextIn = randInt(SPAWN_MIN, SPAWN_MAX);
+        spawnTimer = setTimeout(spawnLoop, nextIn);
+    }
+
+    function spawnOneMole() {
+        const free = [];
+        for (let i = 0; i < 9; i++) {
+            if (!activeHoles.has(i)) free.push(i);
+        }
+        if (free.length === 0) return;
+
+        const holeIndex = free[Math.floor(Math.random() * free.length)];
+        const moleEl = document.getElementById(`m${holeIndex}`);
+        const randomMole = moleData[Math.floor(Math.random() * moleData.length)];
+
+        activeHoles.add(holeIndex);
+        moleEl.innerText = randomMole.name;
+        moleEl.dataset.types = JSON.stringify(randomMole.types);
+        moleEl.dataset.note = randomMole.note;
+        moleEl.classList.add('up');
+        moleEl.classList.remove('correct-hit', 'wrong-hit');
+        moleEl.onclick = () => hit(moleEl, holeIndex);
+
+        const upTime = randInt(UP_TIME_MIN, UP_TIME_MAX);
+        setTimeout(() => hideMole(moleEl, holeIndex), upTime);
+    }
+
+    function hideMole(el, holeIndex) {
+        if (!activeHoles.has(holeIndex)) return;
+        el.classList.remove('up');
+        el.onclick = null;
+        setTimeout(() => {
+            if (!el.classList.contains('up')) el.innerText = "";
+        }, 150);
+        activeHoles.delete(holeIndex);
+    }
+
+    function hit(el, holeIndex) {
+        if (!gameActive) return;
+        if (!el.classList.contains('up')) return;
+
+        const types = JSON.parse(el.dataset.types || "[]");
+        const isCorrect = types.includes(activeMission.targetType);
+
+        if (isCorrect) {
+            score += SCORE_CORRECT;
+            el.classList.add('correct-hit');
+            showPop(el, "正確! " + (el.dataset.note || ""), "#16a34a");
+            if (score % 30 === 0) nextMission();
+        } else {
+            score = Math.max(0, score - SCORE_WRONG);
+el.classList.add('wrong-hit');
+            showPop(el, `打錯了! -${SCORE_WRONG}`, "#dc2626");
+        }
+
+        updateUI();
+        setTimeout(() => hideMole(el, holeIndex), 200);
+        if (score >= PASS_SCORE) winGame();
+}
+
+    function showPop(el, txt, color) {
+        const pop = document.createElement('div');
+        pop.className = 'feedback-pop';
+        pop.innerText = txt;
+        pop.style.color = color;
+        el.parentElement.appendChild(pop);
+        setTimeout(() => pop.remove(), 800);
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = score;
+    }
+function winGame() {
+        gameActive = false;
+        clearTimeout(spawnTimer);
+        for (let i = 0; i < 9; i++) {
+            const el = document.getElementById(`m${i}`);
+            el.classList.remove('up');
+            el.onclick = null;
+        }
+        activeHoles.clear();
+        document.getElementById('next-page').classList.remove('disabled');
+        alert("恭喜通關！您已獲得 150 分，完全掌握動物生殖與發育的知識。");
+    }
+</script>
+
+</body>
+</html>
