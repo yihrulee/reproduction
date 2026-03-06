@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>繁殖行為連連看（24題｜直線/直角）</title>
+  <title>繁殖行為連連看（24題｜直線/兩次轉彎）</title>
   <style>
     :root{
       --bg:#eef2f7;
@@ -283,7 +283,7 @@
       <div class="desc">
         <div class="rules">
           <div><b>類別：</b> <b>求偶</b>（吸引配偶）／<b>護卵</b>（保護或孵卵）／<b>育幼</b>（照顧幼體）。</div>
-          <div><b>玩法：</b>點兩個「同類別」項目，若能用<b>一直線</b>或<b>一個直角</b>連起來，且<b>連線不能穿過未消失項目</b>，就消除並得分。</div>
+          <div><b>玩法：</b>點兩個「同類別」項目，若能用<b>一直線</b>、<b>一個直角</b>或<b>兩個直角</b>連起來，且<b>連線不能穿過未消失項目</b>，就消除並得分。</div>
           <div><b>過關：</b>題目皆被消除即可過關（連錯也可，解鎖下一頁）。</div>
           <div><b>結束：</b>24 個項目全部消除即過關，若無法全部消除則請重玩一次。</div>
         </div>
@@ -380,6 +380,8 @@
     let bad = 0;
 
     let selected = null; // element
+    let timer = null;
+    let timeLeft = 0;
 
     const tilesByIdx = new Map();
 
@@ -475,33 +477,67 @@ function updateNav(){
       return true;
     }
 
-    // 回傳路徑（idx 陣列）：[a,b] 或 [a,corner,b]；若不可連線回傳 null
+    // 回傳路徑（idx 陣列）：[a,b]、[a,corner,b] 或 [a,c1,c2,b]；若不可連線回傳 null
     function findPath(aIdx, bIdx){
       const A = idxToRC(aIdx);
       const B = idxToRC(bIdx);
 
-      // 直線
-      if (A.r === B.r){
-        if (clearRow(A.r, A.c, B.c)) return [aIdx, bIdx];
-      }
-      if (A.c === B.c){
-        if (clearCol(A.c, A.r, B.r)) return [aIdx, bIdx];
+      function tryOneTurn(){
+        // 一個直角：corner1 = (A.r, B.c)
+        const c1 = rcToIdx(A.r, B.c);
+        if (c1 !== CENTER_IDX && isEmptyIdx(c1)){
+          if (clearRow(A.r, A.c, B.c) && clearCol(B.c, A.r, B.r)){
+            return [aIdx, c1, bIdx];
+          }
+        }
+
+        // corner2 = (B.r, A.c)
+        const c2 = rcToIdx(B.r, A.c);
+        if (c2 !== CENTER_IDX && isEmptyIdx(c2)){
+          if (clearCol(A.c, A.r, B.r) && clearRow(B.r, B.c, A.c)){
+            return [aIdx, c2, bIdx];
+          }
+        }
+        return null;
       }
 
-      // 一個直角：corner1 = (A.r, B.c)
-      const c1 = rcToIdx(A.r, B.c);
-      if (c1 !== CENTER_IDX && isEmptyIdx(c1)){
-        if (clearRow(A.r, A.c, B.c) && clearCol(B.c, A.r, B.r)){
-          return [aIdx, c1, bIdx];
+      // 直線
+      if (A.r === B.r && clearRow(A.r, A.c, B.c)) return [aIdx, bIdx];
+      if (A.c === B.c && clearCol(A.c, A.r, B.r)) return [aIdx, bIdx];
+
+      // 一個直角
+      const oneTurn = tryOneTurn();
+      if (oneTurn) return oneTurn;
+
+      // 兩個直角：沿著 A 的列、欄延伸，找可作為第二個轉折的空點
+      for (let c = 0; c < GRID; c++){
+        if (c === A.c) continue;
+        const midIdx = rcToIdx(A.r, c);
+        if (midIdx === CENTER_IDX || !isEmptyIdx(midIdx)) continue;
+        if (!clearRow(A.r, A.c, c)) continue;
+
+        const M = {r: A.r, c};
+        const c2 = rcToIdx(B.r, M.c);
+        if (c2 === CENTER_IDX || !isEmptyIdx(c2)) continue;
+        if (clearCol(M.c, M.r, B.r) && clearRow(B.r, M.c, B.c)){
+          return [aIdx, midIdx, c2, bIdx];
         }
       }
-      // corner2 = (B.r, A.c)
-      const c2 = rcToIdx(B.r, A.c);
-      if (c2 !== CENTER_IDX && isEmptyIdx(c2)){
-        if (clearCol(A.c, A.r, B.r) && clearRow(B.r, B.c, A.c)){
-          return [aIdx, c2, bIdx];
+
+      for (let r = 0; r < GRID; r++){
+        if (r === A.r) continue;
+        const midIdx = rcToIdx(r, A.c);
+        if (midIdx === CENTER_IDX || !isEmptyIdx(midIdx)) continue;
+        if (!clearCol(A.c, A.r, r)) continue;
+
+        const M = {r, c: A.c};
+        const c2 = rcToIdx(M.r, B.c);
+        if (c2 === CENTER_IDX || !isEmptyIdx(c2)) continue;
+        if (clearRow(M.r, M.c, B.c) && clearCol(B.c, M.r, B.r)){
+          return [aIdx, midIdx, c2, bIdx];
         }
       }
+
       return null;
     }
 
@@ -587,6 +623,7 @@ function updateNav(){
 
     function end(reason){
       running = false;
+      if (timer) { clearInterval(timer); timer = null; }
 
       if (selected){
         selected.classList.remove("selected");
@@ -690,6 +727,7 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
 
             function start(){
       running = true;
+      if (timer) clearInterval(timer);
       score = 0;
       passed = false;
       streak = 0;
@@ -700,12 +738,6 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
       const cells = makeBoard();
       renderBoard(cells);
       updateHud();
-      timer = setInterval(() => {
-        if (!running) return;
-        timeLeft -= 1;
-        updateHud();
-        if (timeLeft <= 0) end("time");
-      }, 1000);
     }
 
     // keep lines aligned on resize
