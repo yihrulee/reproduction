@@ -285,7 +285,7 @@
           <div><b>類別：</b> <b>求偶</b>（吸引配偶）／<b>護卵</b>（保護或孵卵）／<b>育幼</b>（照顧幼體）。</div>
           <div><b>玩法：</b>點兩個「同類別」項目，若能用<b>一直線</b>或<b>一個直角</b>連起來，且<b>連線不能穿過未消失項目</b>，就消除並得分。</div>
           <div><b>過關：</b>題目皆被消除即可過關（連錯也可，解鎖下一頁）。</div>
-          <div><b>結束：</b>75 秒到，或 24 個項目全部消除即停止。</div>
+          <div><b>結束：</b>24 個項目全部消除即過關，若無法全部消除則請重玩一次。</div>
         </div>
         <div>計分：成功 +10；連續成功第 2 次起每次額外 +2（連越多加越多）；連錯 -5。提示類別會 -10（顯示 2 秒）。</div>
       </div>
@@ -293,7 +293,6 @@
 
     <div class="toolbar">
       <div class="hud" aria-live="polite">
-        <div class="pill"><span class="k">⏱️ 時間</span><span class="v" id="time">75</span></div>
         <div class="pill"><span class="k">⭐ 分數</span><span class="v" id="score">0</span></div>
         <div class="pill"><span class="k">🔥 連續</span><span class="v" id="streak">0</span></div>
         <div class="pill"><span class="k">✅ 成功</span><span class="v" id="ok">0</span></div>
@@ -318,6 +317,7 @@
 
 <footer class="footerNav" aria-label="頁尾導覽">
   <a class="navBtn" href="6_368.html">← 上一頁</a>
+  <button class="navBtn" id="replayBtn" type="button">重玩一次</button>
   <a class="navBtn disabled" id="nextPage" href="./8_603.html" aria-disabled="true" tabindex="-1">下一頁 →</a>
 </footer>
   </div>
@@ -364,7 +364,6 @@
     const wrap = document.getElementById("boardWrap");
     const svg = document.getElementById("lineLayer");
 
-    const timeEl = document.getElementById("time");
     const scoreEl = document.getElementById("score");
     const streakEl = document.getElementById("streak");
     const okEl = document.getElementById("ok");
@@ -373,10 +372,9 @@
 
     const startBtn = document.getElementById("startBtn");
     const revealBtn = document.getElementById("revealBtn");
+    const replayBtn = document.getElementById("replayBtn");
 
     let running = false;
-    let timer = null;
-    let timeLeft = 75;
 
     let score = 0;
     let streak = 0;
@@ -510,7 +508,6 @@ function updateNav(){
     }
 
     function updateHud(){
-      timeEl.textContent = String(timeLeft);
       scoreEl.textContent = String(score);
       streakEl.textContent = String(streak);
       okEl.textContent = String(ok);
@@ -592,8 +589,6 @@ function updateNav(){
 
     function end(reason){
       running = false;
-      if (timer) clearInterval(timer);
-      timer = null;
 
       if (selected){
         selected.classList.remove("selected");
@@ -605,15 +600,15 @@ function updateNav(){
       const totalPairs = ITEMS.length / 2;
       const passedNow = (ok === totalPairs);
 const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
-      const title = (reason === "win") ? `全部完成！${verdict}` : `時間到！${verdict}`;
-      const extra = (reason === "win") ? `剩餘時間：<strong>${timeLeft}</strong> 秒` : "";
+      const title = `全部完成！${verdict}`;
+      const extra = "";
 
       resultEl.innerHTML = `
         <div style="font-size:16px;font-weight:900;margin-bottom:6px;">${title}</div>
         <div>⭐ 最終得分：<strong>${score}</strong> ${extra ? "｜" + extra : ""}</div>
                 <div style="margin-top:6px;">🏁 結果：<strong>${verdict}</strong>（題目皆被消除過關）</div>
 <div>✅ 成功：<strong>${ok}</strong>　❌ 連錯：<strong>${bad}</strong>　🎯 正確率：<strong>${acc}%</strong></div>
-        <div style="margin-top:8px;color:var(--muted);">按「開始 / 重新開始」可再玩一次。</div>
+        <div style="margin-top:8px;color:var(--muted);">若無法全部消除，請按「重玩一次」重新挑戰。</div>
       `;
       resultEl.classList.remove("hidden");
     }
@@ -697,7 +692,6 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
 
             function start(){
       running = true;
-      timeLeft = 75;
       score = 0;
       passed = false;
       streak = 0;
@@ -708,7 +702,6 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
       const cells = makeBoard();
       renderBoard(cells);
       updateHud();
-      if (timer) clearInterval(timer);
       timer = setInterval(() => {
         if (!running) return;
         timeLeft -= 1;
@@ -745,6 +738,7 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
 
     startBtn.addEventListener("click", start);
     revealBtn.addEventListener("click", revealCategories);
+    replayBtn.addEventListener("click", start);
 
     // initial preview board (not running)
     renderBoard(makeBoard());
