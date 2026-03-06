@@ -287,7 +287,7 @@
           <div><b>過關：</b>題目皆被消除即可過關（連錯也可，解鎖下一頁）。</div>
           <div><b>結束：</b>24 個項目全部消除即過關，若無法全部消除則請重玩一次。</div>
         </div>
-        <div>計分：成功 +10；連續成功第 2 次起每次額外 +2（連越多加越多）；連錯 -5。提示類別會 -10（顯示 2 秒）。</div>
+        <div>計分：成功 +10；連續成功第 2 次起每次額外 +2（連越多加越多）；連錯 -5。</div>
       </div>
     </header>
 
@@ -300,7 +300,6 @@
       </div>
       <div class="actions">
         <button id="startBtn">開始 / 重新開始</button>
-        <button class="secondary" id="revealBtn" title="顯示各卡片類別 2 秒（扣 10 分）">提示類別（-10）</button>
       </div>
     </div>
 
@@ -371,7 +370,6 @@
     const resultEl = document.getElementById("result");
 
     const startBtn = document.getElementById("startBtn");
-    const revealBtn = document.getElementById("revealBtn");
     const replayBtn = document.getElementById("replayBtn");
 
     let running = false;
@@ -710,34 +708,10 @@ const verdict = passedNow ? "挑戰成功" : "挑戰失敗";
       }, 1000);
     }
 
-    function revealCategories(){
-      if (!running) return;
-
-      score -= 10;
-      clampScore();
-      updateHud();
-
-      const tiles = [...board.querySelectorAll(".tile.playable")];
-      tiles.forEach(t => {
-        if (t.classList.contains("matched")) return;
-        t.dataset.prevText = t.textContent;
-        t.textContent = `【${t.dataset.cat}】\n${t.dataset.text}`;
-      });
-
-      setTimeout(() => {
-        tiles.forEach(t => {
-          if (!t.dataset.prevText) return;
-          t.textContent = t.dataset.prevText;
-          delete t.dataset.prevText;
-        });
-      }, 2000);
-    }
-
     // keep lines aligned on resize
     window.addEventListener("resize", () => resetSvg());
 
     startBtn.addEventListener("click", start);
-    revealBtn.addEventListener("click", revealCategories);
     replayBtn.addEventListener("click", start);
 
     // initial preview board (not running)
