@@ -834,7 +834,7 @@
             </div>
 
             <div class="moleHUD">
-              <div class="pill">時間 <b id="g2Time">20</b>s</div>
+              <div class="pill">時間 <b id="g2Time">25</b>s</div>
               <div class="pill">得分 <b id="g2Score">0</b></div>
               <div class="pill">失誤 <b id="g2Miss">0</b></div>
               <div class="pill">通過條件：<b>得分 ≥ 10</b> 且 <b>失誤 ≤ 3</b></div>
@@ -1306,7 +1306,7 @@
   const g2Fb = document.getElementById('g2Feedback');
 
   const holes = 9;
-  let g2 = { running:false, t:20, score:0, miss:0, timer:null, popTimer:null };
+  let g2 = { running:false, t:25, score:0, miss:0, timer:null, popTimer:null };
 
   function g2ResetUI(){
     g2Time.textContent = String(g2.t);
@@ -1375,7 +1375,7 @@
   function g2StartRun(){
     if(state.cleared[1]) return;
     g2.running = true;
-    g2.t = 20;
+    g2.t = 25;
     g2.score = 0;
     g2.miss = 0;
     g2ResetUI();
